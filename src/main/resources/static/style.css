@@ -1,0 +1,98 @@
+body{
+    display: flex;
+    background-color: #000;
+    color: #fff;
+    font-family: sans-serif;
+    justify-content: center;
+    align-items: center;
+}
+.profile{
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 50px;
+    height: 50px;
+    border: 1px solid green;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.login{
+    position: absolute;
+    display: flex;
+    top: 17px;
+    right: 15px;
+    width: 70px;
+    height: 40px;
+    border: 1px solid green;
+    border-radius: 10%;
+    justify-content: center;
+    align-items: center;
+}
+.login:hover{
+    background-color: green;
+    color: black;
+}
+.profile:hover{
+    background-color: green;
+    color: black;
+}
+.board{
+    width: 390px;
+    height: 390px;
+    position: relative;
+    padding-top: 100px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+.xo{
+    width: 100%;
+    height: 100%;
+    font-size: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.result{
+    max-width: 100%;
+    height: auto;
+    font-size: 36px;
+}
+.name{
+    margin-top: 20px;
+    text-align: center;
+}
+.player{
+    height: 200px;
+    width: 200px;
+    margin-right: 100px;
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.player.two{
+    margin-left: 100px;
+    margin-right: 0;
+}
+.square{
+    float: left;
+    width: 126px;
+    height: 126px;
+    background-color: #000;
+    border: 2px solid #cacaca;
+}
+.square.top{
+    border-top: black;
+}
+.square.bottom{
+    border-bottom: black;
+}
+.square.left{
+    border-left: black;
+}
+.square.right{
+    border-right: black;
+}
