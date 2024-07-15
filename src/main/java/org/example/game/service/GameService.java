@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GameService {
 
-    private GameState gameState = new GameState();
+    private final GameState gameState = new GameState();
 
     public GameState getGameState() {
         return gameState;

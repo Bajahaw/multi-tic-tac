@@ -30,14 +30,19 @@ public class GameController {
         sendInitialState(emitter);
         return emitter;
     }
+
     @PostMapping("/move/{cellIndex}")
     public ResponseEntity<String> makeMove(@PathVariable int cellIndex) {
         String move;
         if(gameService.makeMove(cellIndex)) {
-            move = gameService.getGameState().getState()[cellIndex];
+            move = gameService.getGameState().getBoard()[cellIndex];
             broadcastMove(cellIndex, "<div class=\"xo\">"+move+"</div>");
+            if(gameService.gameEnded())
+                broadcastGameStatus(gameService.getGameState().pOneScore, gameService.getGameState().pTwoScore);
+
+        } else if (gameService.gameEnded()) {
+            reset();
         }
-        if(gameService.gameEnded()) broadcastGameStatus(gameService.getGameState().pOneScore, gameService.getGameState().pTwoScore);
         return ResponseEntity.noContent().build();
     }
 
@@ -46,6 +51,13 @@ public class GameController {
             try {
                 emitter.send(SseEmitter.event().name("player:1").data(score1));
                 emitter.send(SseEmitter.event().name("player:2").data(score2));
+                if(gameService.getGameState().status != "draw") {
+                    for(int i = 0; i < 3; i++) {
+                        String move = gameService.getGameState().getBoard()[gameService.getGameState().winningLine[0]];
+                        String data = "<div class=\"xo"+" win"+"\">"+move+"</div>";
+                        emitter.send(SseEmitter.event().name("cellUpdate:" + gameService.getGameState().winningLine[i] ).data(data));
+                    }
+                }
             } catch (IOException e) {
                 emitters.remove(emitter);
             }
@@ -64,20 +76,19 @@ public class GameController {
 
     private void sendInitialState(SseEmitter emitter) {
         try {
-            String[] state = gameService.getGameState().getState();
+            String[] state = gameService.getGameState().getBoard();
             for (int i = 0; i < 9; i++) {
-                if (!Objects.equals(state[i], "")) {
                     emitter.send(SseEmitter.event().name("cellUpdate:" + i).data(state[i]));
                 }
-            }
-            //emitter.send(SseEmitter.event().name("gameStatus").data(gameService.getGameState().getStatus()));
         } catch (IOException e) {
             emitters.remove(emitter);
         }
     }
 
     @GetMapping("/reset")
-    public void reset() {
+    public ResponseEntity<String> reset() {
         gameService.reset();
+        sendInitialState(emitters.getFirst());
+        return ResponseEntity.ok().build();
     }
 }
