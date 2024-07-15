@@ -8,8 +8,22 @@ public class GameService {
 
     private GameState gameState = new GameState();
 
-    public GameState makeMove(int id) {
-        gameState.update(id);
+    public GameState getGameState() {
         return gameState;
     }
+
+    public void reset(){
+        gameState.reset();
+    }
+
+    public boolean makeMove(int id) {
+        boolean moved = gameState.update(id);
+        if(moved) gameState.updateStatus();
+        return moved;
+    }
+
+    public boolean gameEnded() {
+        return !gameState.status.isEmpty();
+    }
+
 }

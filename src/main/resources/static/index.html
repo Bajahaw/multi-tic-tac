@@ -4,47 +4,51 @@
     <meta charset="UTF-8">
     <title>Multi Tic-Tac</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
 </head>
 <body>
 <div class="profile">P</div>
-<div class="login">login</div>
-<div class="player one">
-    <div class="result"> 1.5 </div>
-    <div class="name"> player 1</div>
-</div>
-<div class="board">
-    <div id="0" class="square top left" hx-get="/update-content" hx-trigger="click" hx-target=".board">
-        <div class="xo"></div>
+<div class="login" hx-get="reset" hx-trigger="click">login</div>
+<div class="container" hx-ext="sse" sse-connect="/connect">
+    <div class="player one">
+        <div class="result" sse-swap="player:1"> 1.5</div>
+        <div class="name"> player 1</div>
     </div>
-    <div id="1" class="square top" hx-get="/update-content" hx-trigger="click" hx-target=".board">
-        <div class="xo"></div>
+    <div class="board">
+        <div id="0" class="square top left" hx-post="/move/0" sse-swap="cellUpdate:0">
+            <div class="xo"></div>
+        </div>
+        <div id="1" class="square top" hx-post="/move/1" sse-swap="cellUpdate:1">
+            <div class="xo"></div>
+        </div>
+        <div id="2" class="square top right" hx-post="/move/2" sse-swap="cellUpdate:2">
+            <div class="xo"></div>
+        </div>
+        <div id="3" class="square left" hx-post="/move/3" sse-swap="cellUpdate:3">
+            <div class="xo"></div>
+        </div>
+        <div id="4" class="square" hx-post="/move/4" sse-swap="cellUpdate:4">
+            <div class="xo"></div>
+        </div>
+        <div id="5" class="square right" hx-post="/move/5" sse-swap="cellUpdate:5">
+            <div class="xo"></div>
+        </div>
+        <div id="6" class="square bottom left" hx-post="/move/6" sse-swap="cellUpdate:6">
+            <div class="xo"></div>
+        </div>
+        <div id="7" class="square bottom" hx-post="/move/7" sse-swap="cellUpdate:7">
+            <div class="xo"></div>
+        </div>
+        <div id="8" class="square bottom right" hx-post="/move/8" sse-swap="cellUpdate:8">
+            <div class="xo"></div>
+        </div>
     </div>
-    <div id="2" class="square top right" hx-get="/update-content" hx-trigger="click" hx-target=".board">
-        <div class="xo"></div>
+    <div class="player two">
+        <div class="result" sse-swap="player:2">0.5</div>
+        <div class="name"> player 2</div>
     </div>
-    <div id="3" class="square left" hx-get="/update-content" hx-trigger="click" hx-target=".board">
-        <div class="xo"></div>
-    </div>
-    <div id="4" class="square" hx-get="/update-content" hx-trigger="click" hx-target=".board">
-        <div class="xo"></div>
-    </div>
-    <div id="5" class="square right" hx-get="/update-content" hx-trigger="click" hx-target=".board">
-        <div class="xo"></div>
-    </div>
-    <div id="6" class="square bottom left" hx-get="/update-content" hx-trigger="click" hx-target=".board">
-        <div class="xo"></div>
-    </div>
-    <div id="7" class="square bottom" hx-get="/update-content" hx-trigger="click" hx-target=".board">
-        <div class="xo"></div>
-    </div>
-    <div id="8" class="square bottom right" hx-get="/update-content" hx-trigger="click" hx-target=".board">
-        <div class="xo"></div>
-    </div>
-</div>
-<div class="player two">
-    <div class="result"> 0.5 </div>
-    <div class="name"> player 2</div>
 </div>
 </body>
+
 </html>
