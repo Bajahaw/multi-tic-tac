@@ -33,12 +33,22 @@ public class GameController {
 
     @PostMapping("/move/{cellIndex}")
     public ResponseEntity<String> makeMove(@PathVariable int cellIndex) {
+
         String move;
+
         if(gameService.makeMove(cellIndex)) {
             move = gameService.getGameState().getBoard()[cellIndex];
             broadcastMove(cellIndex, "<div class=\"xo\">"+move+"</div>");
-            if(gameService.gameEnded())
+
+            if(!gameService.gameEnded()) {
+                int cell = gameService.getGameState().computerMove;
+                move = gameService.getGameState().getBoard()[cell];
+                broadcastMove(gameService.getGameState().computerMove, "<div class=\"xo\">" + move + "</div>");
+            }
+
+            if (gameService.gameEnded()){
                 broadcastGameStatus(gameService.getGameState().pOneScore, gameService.getGameState().pTwoScore);
+            }
 
         } else if (gameService.gameEnded()) {
             reset();
@@ -54,7 +64,7 @@ public class GameController {
                 if(gameService.getGameState().status != "draw") {
                     for(int i = 0; i < 3; i++) {
                         String move = gameService.getGameState().getBoard()[gameService.getGameState().winningLine[0]];
-                        String data = "<div class=\"xo"+" win"+"\">"+move+"</div>";
+                        String data = "<div class=\"xo"+" blink"+"\">"+move+"</div>";
                         emitter.send(SseEmitter.event().name("cellUpdate:" + gameService.getGameState().winningLine[i] ).data(data));
                     }
                 }

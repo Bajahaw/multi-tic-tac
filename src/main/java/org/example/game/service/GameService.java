@@ -19,6 +19,10 @@ public class GameService {
     public boolean makeMove(int id) {
         boolean moved = gameState.update(id);
         if(moved) gameState.updateStatus();
+        if(!gameEnded()) {
+            gameState.update(gameState.computerMove(gameState.evaluateBoard()));
+            gameState.updateStatus();
+        }
         return moved;
     }
 

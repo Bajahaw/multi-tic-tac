@@ -56,17 +56,18 @@ body{
     width: 90%;
     height: 90%;
     font-size: 150px;
+    font-family: C059, serif;
     display: flex;
     justify-content: center;
     align-items: center;
     -webkit-user-select: none;  /* Safari */
     -ms-user-select: none;      /* IE 10 and IE 11 */
     user-select: none;
-    animation: pop 0.3s ease-in-out;
+    animation: pop 0.2s ease-in-out;
 }
 @keyframes pop {
     0% {
-        transform: scale(0.8);
+        transform: scale(0.6);
     }
     50% {
         transform: scale(1.2);
@@ -75,8 +76,9 @@ body{
         transform: scale(1);
     }
 }
-.xo.win{
-    animation: winning 1s infinite steps(2, jump-none);
+.xo.blink{
+    animation: winning 0.3s steps(2, jump-none);
+    animation-iteration-count: 3;
 }
 @keyframes winning {
     0% {
