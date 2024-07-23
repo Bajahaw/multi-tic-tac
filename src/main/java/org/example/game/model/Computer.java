@@ -1,17 +1,16 @@
 package org.example.game.model;
 
 public class Computer extends User {
-    public int move;
-    public static String symbol;
 
     public Computer(int id, String name, String symbol) {
         super(id, name, symbol);
     }
 
-    public void setSymbol(char symbol) {}
-    public int sendMove(String[] board) {
-        return computerMove(board, evaluateBoard(board));
+    @Override
+    public int getMove() {
+        return computerMove(game.getBoard(), evaluateBoard(game.getBoard()));
     }
+
     private int computerMove(String[] board, int[] combination) {
         for (int i = 0; i < 3; i++) {
             if (board[combination[i]] == "") {
@@ -21,6 +20,7 @@ public class Computer extends User {
         }
         return -1;
     }
+
     private int[] evaluateBoard(String[] board) {
         int winEvaluation = 0;
         int loseEvaluation = 0;
@@ -84,7 +84,6 @@ public class Computer extends User {
         } else {
             return worstCompination;
         }
-
     }
-
+    public void setSymbol(char symbol) {}
 }

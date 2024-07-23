@@ -1,5 +1,6 @@
 package org.example.game.service;
 
+import org.example.game.model.Computer;
 import org.example.game.model.Game;
 import org.example.game.model.GameServer;
 import org.example.game.model.gameStatus;
@@ -7,29 +8,44 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GameService {
-
+    //-------------------------------------------------
+    EventService eventService;
     private final Game game = GameServer.createGame();
+    //-------------------------------------------------
+
+    public GameService(EventService eventService){
+        this.eventService = eventService;
+    }
 
     public Game getGame() {
         return game;
     }
-
     public void reset(){
         game.reset();
     }
-
-    public boolean makeMove(int id) {
-        boolean moved = game.makeMove(id);
-        if(moved) game.updateStatus();
-        if(!gameEnded()) {
-            game.makeMove(game.computerMove);
-            game.updateStatus();
-        }
-        return moved;
-    }
-
     public boolean gameEnded() {
         return !(game.status == gameStatus.IN_PROGRESS);
+    }
+
+    public boolean makeMove() {
+        boolean moved = game.makeMove();
+        String move;
+        System.out.println("game.playerTwo instanceof Computer: " + (game.playerTwo instanceof Computer));
+        System.out.println("game is still going: " + !gameEnded());
+        if (moved) {
+            game.updateStatus();
+            move = game.getBoard()[game.lastMove];
+            eventService.broadcastMove(game.lastMove, "<div class=\"xo\">" + move + "</div>");
+
+            //if(game.playerTwo instanceof Computer && !gameEnded()) makeMove();
+            if (gameEnded()) {
+                eventService.broadcastGameStatus(getGame().pOneScore, getGame().pTwoScore);
+            }
+
+        } else if (gameEnded()) {
+            reset();
+        }
+        return moved;
     }
 
 }

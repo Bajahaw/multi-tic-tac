@@ -16,31 +16,26 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Controller
 public class GameController {
+
     //--------------------------------------------
     EventService eventService = new EventService();
-    GameService gameService = new GameService();
+    GameService gameService = new GameService(eventService);
     //--------------------------------------------
+
     @GetMapping("/connect")
-    public ResponseEntity<SseEmitter> connect() {
+    public SseEmitter connect() {
         SseEmitter emitter = eventService.connect();
-        eventService.sendInitialState(gameService.getGame().getBoard());
-        return ResponseEntity.ok(emitter);
+        new Thread(() -> {
+            eventService.sendInitialState(gameService.getGame().getBoard());
+        });
+        return emitter;
     }
 
     @PostMapping("/move/{cellIndex}")
     public ResponseEntity<String> makeMove(@PathVariable int cellIndex) {
-        String move;
-        if(gameService.makeMove(cellIndex)) {
-            move = gameService.getGame().getBoard()[cellIndex];
-            eventService.broadcastMove(cellIndex, "<div class=\"xo\">"+move+"</div>");
-
-            if (gameService.gameEnded()){
-                eventService.broadcastGameStatus(gameService.getGame().pOneScore, gameService.getGame().pTwoScore);
-            }
-
-        } else if (gameService.gameEnded()) {
-            reset();
-        }
+        gameService.getGame().playerOne.setMove(cellIndex);
+        if(gameService.makeMove())
+            return ResponseEntity.ok().build();
         return ResponseEntity.noContent().build();
     }
 

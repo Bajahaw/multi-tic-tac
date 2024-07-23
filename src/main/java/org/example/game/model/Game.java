@@ -6,31 +6,35 @@ public class Game {
 
     //-------------------------------------------
     private final Board board;
-    User playerOne;
-    User playerTwo;
+    public User playerOne;
+    public User playerTwo;
     boolean playerOneTurn = true;
     public double pOneScore = 0;
     public double pTwoScore = 0;
     public gameStatus status;
     public int[] winningLine;
-    public int computerMove;
+    public int lastMove;
     //-------------------------------------------
 
     public Game(User playerOne, User playerTwo) {
         this.board = new Board();
         this.playerOne = playerOne;
         this.playerTwo = playerTwo;
+        this.status = gameStatus.IN_PROGRESS;
+        playerOne.joinGame(this);
+        playerTwo.joinGame(this);
     }
 
-    public boolean makeMove(int id) {
-        if (board.grid[id] == "" && status == gameStatus.IN_PROGRESS) {
-            if (playerOneTurn) {
-                board.update(id, playerOne.getSymbol());
-                playerOneTurn = false;
-            } else {
-                playerOneTurn = true;
-                board.update(id, playerTwo.getSymbol());
-            }
+    public boolean makeMove() {
+        User user = playerOneTurn? playerOne : playerTwo;
+        int move = user.getMove();
+        System.out.println("whose turn: " + user.getName());
+        System.out.println(move + " ////////////////////////////////");
+        if(move == -1) return false;
+        if(status == gameStatus.IN_PROGRESS){
+            board.update(move, user.getSymbol());
+            lastMove = move;
+            playerOneTurn = user != playerOne;
             return true;
         }
         return false;

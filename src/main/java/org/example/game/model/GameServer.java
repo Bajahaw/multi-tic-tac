@@ -7,7 +7,7 @@ public class GameServer {
     static List<Game> activeGames = new ArrayList<>();
 
     public static Game createGame(){
-        Game game = new Game(new User(User.index, "Random User", "○"), new User(User.index, "Random User", "×"));
+        Game game = new Game(new User(User.index, "Random User", "○"), new Computer(User.index, "Computer", "×"));
         activeGames.add(game);
         return game;
     }
