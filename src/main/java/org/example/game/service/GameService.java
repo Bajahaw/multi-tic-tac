@@ -1,33 +1,35 @@
 package org.example.game.service;
 
-import org.example.game.model.GameState;
+import org.example.game.model.Game;
+import org.example.game.model.GameServer;
+import org.example.game.model.gameStatus;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GameService {
 
-    private final GameState gameState = new GameState();
+    private final Game game = GameServer.createGame();
 
-    public GameState getGameState() {
-        return gameState;
+    public Game getGame() {
+        return game;
     }
 
     public void reset(){
-        gameState.reset();
+        game.reset();
     }
 
     public boolean makeMove(int id) {
-        boolean moved = gameState.update(id);
-        if(moved) gameState.updateStatus();
+        boolean moved = game.makeMove(id);
+        if(moved) game.updateStatus();
         if(!gameEnded()) {
-            gameState.update(gameState.computerMove(gameState.evaluateBoard()));
-            gameState.updateStatus();
+            game.makeMove(game.computerMove);
+            game.updateStatus();
         }
         return moved;
     }
 
     public boolean gameEnded() {
-        return !gameState.status.isEmpty();
+        return !(game.status == gameStatus.IN_PROGRESS);
     }
 
 }
