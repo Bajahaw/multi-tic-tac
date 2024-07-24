@@ -30,8 +30,6 @@ public class GameService {
     public boolean makeMove() {
         boolean moved = game.makeMove();
         String move;
-        System.out.println("game.playerTwo instanceof Computer: " + (game.playerTwo instanceof Computer));
-        System.out.println("game is still going: " + !gameEnded());
         if (moved) {
             game.updateStatus();
             move = game.getBoard()[game.lastMove];

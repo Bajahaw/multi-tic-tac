@@ -25,6 +25,7 @@ public class GameController {
     @GetMapping("/connect")
     public SseEmitter connect() {
         SseEmitter emitter = eventService.connect();
+        System.out.println("connecting");
         new Thread(() -> {
             eventService.sendInitialState(gameService.getGame().getBoard());
         });
@@ -43,5 +44,11 @@ public class GameController {
     public ResponseEntity<String> reset() {
         gameService.reset();
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reload")
+    public ResponseEntity<String> reload() {
+        eventService.reloadSse();
+        return ResponseEntity.noContent().build();
     }
 }

@@ -7,7 +7,7 @@
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
 </head>
-<body>
+<body hx-post="reload" hx-trigger="load">
 <div class="profile">P</div>
 <div class="login" hx-get="reset" hx-trigger="click">login</div>
 <div class="container" hx-ext="sse" sse-connect="/connect">

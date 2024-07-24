@@ -16,7 +16,7 @@ public class EventService {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitters.add(emitter);
         emitter.onCompletion(() -> emitters.remove(emitter));
-        emitter.onTimeout(() -> emitters.remove(emitter));
+        emitter.onTimeout(() -> System.out.println("SSE connection timed out"));
         emitter.onError(e -> emitters.remove(emitter));
         return emitter;
     }
@@ -63,5 +63,10 @@ public class EventService {
                 emitters.remove(emitters.getFirst());
             }
         }
+    }
+    // This is here to temporarily fix a broken pipe exception
+    public void reloadSse(){
+        if(emitters.size()>1)
+            emitters.removeFirst();
     }
 }
