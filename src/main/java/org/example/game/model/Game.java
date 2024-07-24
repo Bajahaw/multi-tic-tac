@@ -28,10 +28,8 @@ public class Game {
     public boolean makeMove() {
         User user = playerOneTurn? playerOne : playerTwo;
         int move = user.getMove();
-        System.out.println("whose turn: " + user.getName());
-        System.out.println(move + " ////////////////////////////////");
         if(move == -1) return false;
-        if(status == gameStatus.IN_PROGRESS){
+        if(status == gameStatus.IN_PROGRESS && getBoard()[move].isEmpty()){
             board.update(move, user.getSymbol());
             lastMove = move;
             playerOneTurn = user != playerOne;

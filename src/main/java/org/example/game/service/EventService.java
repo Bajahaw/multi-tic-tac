@@ -2,6 +2,7 @@ package org.example.game.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.yaml.snakeyaml.emitter.Emitter;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -14,9 +15,10 @@ public class EventService {
 
     public SseEmitter connect(){
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        emitters.clear(); // this is to prevent making unnecessary emitters and cause broken pipe
         emitters.add(emitter);
         emitter.onCompletion(() -> emitters.remove(emitter));
-        emitter.onTimeout(() -> System.out.println("SSE connection timed out"));
+        emitter.onTimeout(() -> emitters.remove(emitter));
         emitter.onError(e -> emitters.remove(emitter));
         return emitter;
     }

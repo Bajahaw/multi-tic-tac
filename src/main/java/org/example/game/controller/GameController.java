@@ -1,7 +1,5 @@
 package org.example.game.controller;
 
-import org.example.game.model.Computer;
-import org.example.game.model.gameStatus;
 import org.example.game.service.EventService;
 import org.example.game.service.GameService;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.io.IOException;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Controller
 public class GameController {
@@ -25,7 +20,6 @@ public class GameController {
     @GetMapping("/connect")
     public SseEmitter connect() {
         SseEmitter emitter = eventService.connect();
-        System.out.println("connecting");
         new Thread(() -> {
             eventService.sendInitialState(gameService.getGame().getBoard());
         });
@@ -34,9 +28,8 @@ public class GameController {
 
     @PostMapping("/move/{cellIndex}")
     public ResponseEntity<String> makeMove(@PathVariable int cellIndex) {
-        gameService.getGame().playerOne.setMove(cellIndex);
-        if(gameService.makeMove())
-            return ResponseEntity.ok().build();
+        gameService.getGame().playerOne.updateMove(cellIndex);
+        gameService.makeMove();
         return ResponseEntity.noContent().build();
     }
 

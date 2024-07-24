@@ -22,6 +22,7 @@ public class GameService {
     }
     public void reset(){
         game.reset();
+        eventService.sendInitialState(game.getBoard());
     }
     public boolean gameEnded() {
         return !(game.status == gameStatus.IN_PROGRESS);
@@ -35,9 +36,12 @@ public class GameService {
             move = game.getBoard()[game.lastMove];
             eventService.broadcastMove(game.lastMove, "<div class=\"xo\">" + move + "</div>");
 
-            //if(game.playerTwo instanceof Computer && !gameEnded()) makeMove();
+            if(game.playerTwo instanceof Computer && !gameEnded()) return makeMove();
             if (gameEnded()) {
                 eventService.broadcastGameStatus(getGame().pOneScore, getGame().pTwoScore);
+                if(!(game.status == gameStatus.DRAW)) {
+                    eventService.broadcastWinner(game.getBoard()[game.winningLine[0]], game.winningLine);
+                }
             }
 
         } else if (gameEnded()) {

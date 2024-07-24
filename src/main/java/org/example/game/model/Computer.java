@@ -8,6 +8,11 @@ public class Computer extends User {
 
     @Override
     public int getMove() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return computerMove(game.getBoard(), evaluateBoard(game.getBoard()));
     }
 

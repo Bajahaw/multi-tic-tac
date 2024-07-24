@@ -29,8 +29,9 @@ public class User {
         return temp;
     }
 
-    public void setMove(int cellIndex) {
-        move = cellIndex;
+    public void updateMove(int cellIndex) {
+        if (game.playerOneTurn)
+            move = cellIndex;
     }
 
     public void joinGame(Game game) {
