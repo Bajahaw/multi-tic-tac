@@ -22,7 +22,7 @@ body{
     justify-content: center;
     transition: 0.1s;
 }
-.login{
+.clientId{
     position: absolute;
     cursor: pointer;
     display: flex;
@@ -35,10 +35,6 @@ body{
     justify-content: center;
     align-items: center;
     transition: 0.1s;
-}
-.login:hover{
-    background-color: white;
-    color: black;
 }
 .profile:hover{
     background-color: white;
@@ -87,6 +83,29 @@ body{
     100% {
         opacity: 0;
     }
+}
+form{
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+input{
+    max-width: 100px;
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    border-radius: 10%;
+}
+.btn{
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+    border-radius: 10%;
+    transition: 0.1s;
+}
+.btn:hover{
+    background-color: white;
+    color: black;
 }
 .result{
     max-width: 100%;

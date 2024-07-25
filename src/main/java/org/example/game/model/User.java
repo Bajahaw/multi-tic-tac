@@ -1,9 +1,11 @@
 package org.example.game.model;
 
+import java.util.Random;
+
 public class User {
     //-------------------------
     public static int index = 0;
-    protected final int id;
+    protected final String id;
     protected final String name;
     protected String symbol;
     protected Game game;
@@ -11,14 +13,14 @@ public class User {
     protected final double score = 0;
     //--------------------------
 
-    public User(int id, String name, String symbol) {
+    public User(String id, String name, String symbol) {
         this.id = id;
-        this.name = name;
+        this.name = name+ Random.from(new Random()).nextInt(10);
         this.symbol = symbol;
         index++;
     }
 
-    public int getId() { return id; }
+    public String getId() { return id; }
     public String getName() { return name; }
     public String getSymbol() { return symbol; }
     public double getScore() { return score; }
@@ -30,11 +32,15 @@ public class User {
     }
 
     public void updateMove(int cellIndex) {
-        if (game.playerOneTurn)
+        if(game.userToMove == this)
             move = cellIndex;
     }
 
     public void joinGame(Game game) {
         this.game = game;
+    }
+
+    public Game getGame() {
+        return game;
     }
 }

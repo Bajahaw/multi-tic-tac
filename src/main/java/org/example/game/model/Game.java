@@ -1,14 +1,15 @@
 package org.example.game.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Game {
 
     //-------------------------------------------
     private final Board board;
-    public User playerOne;
-    public User playerTwo;
-    boolean playerOneTurn = true;
+    public final List<User> users = new ArrayList<>();
+    User userToMove;
     public double pOneScore = 0;
     public double pTwoScore = 0;
     public gameStatus status;
@@ -16,23 +17,29 @@ public class Game {
     public int lastMove;
     //-------------------------------------------
 
-    public Game(User playerOne, User playerTwo) {
+    public Game(User playerOne) {
         this.board = new Board();
-        this.playerOne = playerOne;
-        this.playerTwo = playerTwo;
+        this.users.add(playerOne);
         this.status = gameStatus.IN_PROGRESS;
         playerOne.joinGame(this);
+        userToMove = playerOne;
+    }
+
+    public void setPlayerTwo(User playerTwo) {
+        playerTwo.symbol = this.users.getFirst().getSymbol() == "○"? "×":"○";
+        this.users.add(playerTwo);
         playerTwo.joinGame(this);
     }
 
     public boolean makeMove() {
-        User user = playerOneTurn? playerOne : playerTwo;
+        User user = userToMove;
         int move = user.getMove();
+        System.out.println(user.getId() + " -> " + move);
         if(move == -1) return false;
         if(status == gameStatus.IN_PROGRESS && getBoard()[move].isEmpty()){
             board.update(move, user.getSymbol());
             lastMove = move;
-            playerOneTurn = user != playerOne;
+            userToMove = user == users.getFirst()? users.getLast() : users.getFirst();
             return true;
         }
         return false;
@@ -44,7 +51,6 @@ public class Game {
 
     public void reset() {
         Arrays.fill(board.grid, "");
-        playerOneTurn = true;
         status = gameStatus.IN_PROGRESS;
     }
 
@@ -54,7 +60,7 @@ public class Game {
             if (board.isFull()) return gameStatus.DRAW;
             return gameStatus.IN_PROGRESS;
         }
-        return board.grid[winningLine[0]] == playerOne.getSymbol() ? gameStatus.PLAYER_ONE_WON : gameStatus.PLAYER_TWO_WON;
+        return board.grid[winningLine[0]] == users.getFirst().getSymbol() ? gameStatus.PLAYER_ONE_WON : gameStatus.PLAYER_TWO_WON;
     }
 
     public void updateStatus() {

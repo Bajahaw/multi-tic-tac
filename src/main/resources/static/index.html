@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Multi Tic-Tac</title>
@@ -9,10 +9,10 @@
 </head>
 <body hx-post="reload" hx-trigger="load">
 <div class="profile">P</div>
-<div class="login" hx-get="reset" hx-trigger="click">login</div>
+<div class="clientId" hx-get="/id" hx-trigger="load" hx-target=".clientId"></div>
 <div class="container" hx-ext="sse" sse-connect="/connect">
     <div class="player one">
-        <div class="result" sse-swap="player:1"> 0 </div>
+        <div class="result" sse-swap="player:1"> 0</div>
         <div class="name"> player 1</div>
     </div>
     <div class="board">
@@ -45,10 +45,19 @@
         </div>
     </div>
     <div class="player two">
-        <div class="result" sse-swap="player:2"> 0 </div>
+        <div class="result" sse-swap="player:2"> 0</div>
         <div class="name"> player 2</div>
     </div>
 </div>
+<form>
+    <div>
+        <label>Join game:
+            <input name="id" hx-post="/join">
+        </label>
+    </div>
+    <button type="button" class="btn" hx-trigger="click">Join</button>
+</form>
+
 </body>
 
 </html>

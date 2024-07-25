@@ -1,32 +1,28 @@
 package org.example.game.model;
 
-public class Computer extends User {
+public class Computer{
 
-    public Computer(int id, String name, String symbol) {
-        super(id, name, symbol);
-    }
-
-    @Override
-    public int getMove() {
+    public static void makeMove(Game game) {
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return computerMove(game.getBoard(), evaluateBoard(game.getBoard()));
+        String symbol = game.users.getFirst().getSymbol() == "○"? "×":"○";
+        game.lastMove = computerMove(game.getBoard(), evaluateBoard(game.getBoard(), symbol), symbol);
+        game.getBoard()[game.lastMove]= symbol;
     }
 
-    private int computerMove(String[] board, int[] combination) {
+    private static int computerMove(String[] board, int[] combination, String symbol) {
         for (int i = 0; i < 3; i++) {
             if (board[combination[i]] == "") {
-                move = combination[i];
                 return combination[i];
             }
         }
         return -1;
     }
 
-    private int[] evaluateBoard(String[] board) {
+    private static int[] evaluateBoard(String[] board, String symbol) {
         int winEvaluation = 0;
         int loseEvaluation = 0;
         int highestWinEvaluation = 0;
