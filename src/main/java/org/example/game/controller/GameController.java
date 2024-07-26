@@ -50,7 +50,7 @@ public class GameController {
     public ResponseEntity<String> id(HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
         if (clientId == null) {
-            System.out.println("here");
+            System.out.println("getting session id: " + clientId);
             clientId = ""+ Random.from(new Random(System.currentTimeMillis())).nextInt(10000, 100000);
             session.setAttribute("clientId", clientId);
         }

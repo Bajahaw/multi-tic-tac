@@ -7,10 +7,10 @@
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
 </head>
-<body hx-post="reload" hx-trigger="load">
+<body>
 <div class="profile">P</div>
 <div class="clientId" hx-get="/id" hx-trigger="load" hx-target=".clientId"></div>
-<div class="container" hx-ext="sse" sse-connect="/connect">
+<div class="container" hx-ext="sse" hx-trigger="load" sse-connect="/connect">
     <div class="player one">
         <div class="result" sse-swap="player:1"> 0</div>
         <div class="name"> player 1</div>
