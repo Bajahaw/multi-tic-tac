@@ -52,10 +52,10 @@
 <form>
     <div>
         <label>Join game:
-            <input name="id" hx-post="/join">
+            <input name="gameId" hx-on="keydown[keyCode==13]">
         </label>
     </div>
-    <button type="button" class="btn" hx-trigger="click">Join</button>
+    <button type="button" class="btn" hx-trigger="click" hx-post="/join">Join</button>
 </form>
 
 </body>

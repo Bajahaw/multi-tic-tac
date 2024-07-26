@@ -30,7 +30,7 @@ public class GameController {
         System.out.println("connecting .. ");
         String clientId = (String) session.getAttribute("clientId");
         if (clientId == null) {
-            return null;
+            session.setAttribute("clientId",id(session).getBody());
         }
 
         Game game = gameService.getGame(clientId);
@@ -48,12 +48,13 @@ public class GameController {
 
     @GetMapping("/id")
     public ResponseEntity<String> id(HttpSession session) {
+        System.out.println("getting id");
         String clientId = (String) session.getAttribute("clientId");
         if (clientId == null) {
             System.out.println("getting session id: " + clientId);
             clientId = ""+ Random.from(new Random(System.currentTimeMillis())).nextInt(10000, 100000);
-            session.setAttribute("clientId", clientId);
         }
+        session.setAttribute("clientId", clientId);
         return ResponseEntity.ok(clientId);
     }
 
@@ -98,19 +99,19 @@ public class GameController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<String> join(HttpSession session, @RequestParam String id) { // Changed to RequestParam
+    public ResponseEntity<String> join(HttpSession session, @RequestParam String gameId) { // Changed to RequestParam
         String clientId = (String) session.getAttribute("clientId");
 
         if (clientId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Client not logged in.");
         }
 
-        Game game = gameService.getGame(id);
+        Game game = gameService.getGame(gameId);
         if (game == null) {
             System.out.println("game not found");
             return ResponseEntity.notFound().build();
         }
-        System.out.println("got game: " + id);
+        System.out.println("got game: " + gameId);
         Game clientGame = gameService.getGame(clientId);
         if (clientGame == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client game not found.");
@@ -121,7 +122,7 @@ public class GameController {
         }
 
         game.setPlayerTwo(clientGame.users.getFirst());
-        eventService.notifyPlayer(id, clientId);
+        eventService.notifyPlayer(gameId, clientId);
         return ResponseEntity.noContent().build();
     }
 }
