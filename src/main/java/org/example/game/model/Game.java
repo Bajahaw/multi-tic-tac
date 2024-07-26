@@ -22,7 +22,7 @@ public class Game {
         this.users.add(playerOne);
         this.status = gameStatus.IN_PROGRESS;
         playerOne.joinGame(this);
-        userToMove = playerOne;
+        userToMove = users.getFirst();
     }
 
     public void setPlayerTwo(User playerTwo) {
@@ -35,6 +35,7 @@ public class Game {
         User user = userToMove;
         int move = user.getMove();
         System.out.println(user.getId() + " -> " + move);
+        System.out.println("shouldv been: " + users.getFirst().getId());
         if(move == -1) return false;
         if(status == gameStatus.IN_PROGRESS && getBoard()[move].isEmpty()){
             board.update(move, user.getSymbol());

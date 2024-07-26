@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Random;
+import java.util.UUID;
 
 @Controller
 public class GameController {
@@ -26,11 +27,10 @@ public class GameController {
 
     @GetMapping("/connect")
     public SseEmitter connect(HttpSession session) {
-
+        System.out.println("connecting .. ");
         String clientId = (String) session.getAttribute("clientId");
         if (clientId == null) {
-            clientId = ""+ Random.from(new Random(System.currentTimeMillis())).nextInt(10000, 100000);
-            session.setAttribute("clientId", clientId);
+            return null;
         }
 
         Game game = gameService.getGame(clientId);
@@ -61,11 +61,18 @@ public class GameController {
     public ResponseEntity<String> makeMove(@PathVariable int cellIndex, HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
         if (clientId == null) {return ResponseEntity.notFound().build();}
-        Game game = gameService.getGame(clientId).users.getFirst().getGame();
+        Game game = gameService.getGame(clientId);
+        if (game != null ) game = game.users.getFirst().getGame();
         System.out.println(game.users.getFirst().getId() +" <-> " + game.users.getLast().getId() + " : " + clientId);
+        Game finalGame = game;
         game.users.forEach(user -> {
-            if(user.getId() == clientId) user.updateMove(cellIndex);
-            gameService.makeMove(game);
+            System.out.println("user id: " + user.getId());
+            System.out.println("client id: " + clientId);
+            if(user.getId() == clientId) {
+                System.out.println("made move: " + user.getId());
+                user.updateMove(cellIndex);
+                gameService.makeMove(finalGame);
+            }
         });
         return ResponseEntity.noContent().build();
     }
@@ -79,8 +86,14 @@ public class GameController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/reload")
-    public ResponseEntity<String> reload() {
+    @GetMapping("/reload")
+    public ResponseEntity<String> reload(HttpSession session) {
+        String clientId = (String) session.getAttribute("clientId");
+        if (clientId == null) {return ResponseEntity.noContent().build();}
+        Game game = gameService.getGame(clientId);
+        if (game != null)game = game.users.getFirst().getGame();
+        if (game == null) {return ResponseEntity.noContent().build();}
+        eventService.sendInitialState(game.getBoard(), game.users);
         return ResponseEntity.noContent().build();
     }
 
@@ -108,6 +121,7 @@ public class GameController {
         }
 
         game.setPlayerTwo(clientGame.users.getFirst());
+        eventService.notifyPlayer(id, clientId);
         return ResponseEntity.noContent().build();
     }
 }

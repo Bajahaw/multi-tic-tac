@@ -23,6 +23,7 @@ public class GameService {
     }
 
     public Game getGame(String id) {
+        if(id == null) return null;
         return activeGames.get(id);
     }
 

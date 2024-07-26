@@ -30,7 +30,8 @@ public class EventService {
         for (User user : users) {
             try {
                 for (int i = 0; i < 9; i++) {
-                    emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + i).data(state[i]));
+                    System.out.println("sending state " + i + " to user " + user.getId());
+                    emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + i).data("<div class=\"xo\">" + state[i] + "</div>"));
                 }
             } catch (IOException e) {
                 emitters.remove(user.getId());
@@ -42,7 +43,7 @@ public class EventService {
         for (User user : users) {
             try {
                 System.out.println("sse emits to: " + user.getId());
-                //System.out.println("size: " + emitters.size());
+                System.out.println("size: " + emitters.size());
                 emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + cellIndex).data(value));
             } catch (IOException e) {
                 emitters.remove(user.getId());
@@ -52,10 +53,10 @@ public class EventService {
 
     public void broadcastGameStatus(double score1, double score2, List<User> users) {
         for (User user : users) {
-
             try {
-                emitters.get(user.getId()).send(SseEmitter.event().name("player:1").data(score1));
                 System.out.println("sse emits to: " + user.getId());
+                emitters.get(user.getId()).send(SseEmitter.event().name("player:1").data(score1));
+                emitters.get(user.getId()).send(SseEmitter.event().name("player:2").data(score2));
             } catch (IOException e) {
                 emitters.remove(user.getId());
             }
@@ -67,11 +68,20 @@ public class EventService {
             for (int i = 0; i < 3; i++) {
                 String data = "<div class=\"xo" + " blink" + "\">" + move + "</div>";
                 try {
+                    System.out.println("winner emits to: " + user.getId());
                     emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + winningLine[i]).data(data));
                 } catch (IOException e) {
                     emitters.remove(user.getId());
                 }
             }
+        }
+    }
+
+    public void notifyPlayer(String id, String clientId) {
+        try {
+            emitters.get(id).send(SseEmitter.event().name("notifications").data(clientId));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
