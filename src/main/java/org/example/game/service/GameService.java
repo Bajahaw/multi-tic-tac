@@ -19,6 +19,7 @@ public class GameService {
 
     public void createGame(String id){
         Game game = new Game(new User(id, "User",  "×"));
+        //System.out.println("this might be null, is it? "+id);
         activeGames.put(id, game);
     }
 
@@ -35,19 +36,18 @@ public class GameService {
         return !(game.status == gameStatus.IN_PROGRESS);
     }
 
-    public boolean makeMove(Game game) {
+    public void makeMove(Game game) {
         boolean moved = game.makeMove();
-        String move;
         if (moved) {
             game.updateStatus();
-            move = game.getBoard()[game.lastMove];
+            String move = game.getBoard()[game.lastMove];
             eventService.broadcastMove(game.lastMove, "<div class=\"xo\">" + move + "</div>", game.users);
 
             if(game.users.size()<2 && !gameEnded(game)) {
                 Computer.makeMove(game);
                 move = game.getBoard()[game.lastMove];
-                game.updateStatus();
                 eventService.broadcastMove(game.lastMove, "<div class=\"xo\">" + move + "</div>", game.users);
+                game.updateStatus();
             }
             if (gameEnded(game)) {
                 eventService.broadcastGameStatus(game.pOneScore, game.pTwoScore, game.users);
@@ -59,7 +59,6 @@ public class GameService {
         } else if (gameEnded(game)) {
             reset(game);
         }
-        return moved;
     }
 
 }

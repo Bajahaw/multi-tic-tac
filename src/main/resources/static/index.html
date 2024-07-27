@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <title>Multi Tic-Tac</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
+    <script src="htmx.min.js"></script>
+    <script src="sse.js"></script>
 </head>
 <body>
 <div class="profile">P</div>
-<div class="clientId" hx-get="/id" hx-trigger="load" hx-target=".clientId" ></div>
 <div class="container" hx-ext="sse" sse-connect="/connect">
+    <div class="clientId" sse-swap="clientId"></div>
     <div class="player one" hx-get="/reload" hx-trigger="load">
         <div class="result" sse-swap="player:1"> 0</div>
         <div class="name"> player 1</div>

@@ -26,9 +26,10 @@ public class Game {
     }
 
     public void setPlayerTwo(User playerTwo) {
-        playerTwo.symbol = this.users.getFirst().getSymbol() == "○"? "×":"○";
+        playerTwo.symbol = this.users.getFirst().getSymbol().equals("○")? "×":"○";
         this.users.add(playerTwo);
         playerTwo.joinGame(this);
+        reset();
     }
 
     public boolean makeMove() {
@@ -61,7 +62,7 @@ public class Game {
             if (board.isFull()) return gameStatus.DRAW;
             return gameStatus.IN_PROGRESS;
         }
-        return board.grid[winningLine[0]] == users.getFirst().getSymbol() ? gameStatus.PLAYER_ONE_WON : gameStatus.PLAYER_TWO_WON;
+        return board.grid[winningLine[0]] .equals( users.getFirst().getSymbol()) ? gameStatus.PLAYER_ONE_WON : gameStatus.PLAYER_TWO_WON;
     }
 
     public void updateStatus() {
@@ -83,9 +84,9 @@ public class Game {
     private int[] checkWinner() {
         int[][] lines = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
         for (int[] line : lines) {
-            if (board.grid[line[0]] != ""
-                    && board.grid[line[0]] == board.grid[line[1]]
-                    && board.grid[line[1]] == board.grid[line[2]]) {
+            if (!board.grid[line[0]].isEmpty()
+                    && board.grid[line[0]].equals(board.grid[line[1]])
+                    && board.grid[line[1]].equals(board.grid[line[2]])) {
                 return line;
             }
         }

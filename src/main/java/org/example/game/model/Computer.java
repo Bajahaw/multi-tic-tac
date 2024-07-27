@@ -10,7 +10,7 @@ public class Computer{
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        String symbol = game.users.getFirst().getSymbol() == "○"? "×":"○";
+        String symbol = game.users.getFirst().getSymbol().equals("○")? "×":"○";
         game.lastMove = computerMove(game.getBoard(), evaluateBoard(game.getBoard(), symbol), symbol);
         game.getBoard()[game.lastMove]= symbol;
     }
@@ -20,8 +20,8 @@ public class Computer{
         for (int i = 0; i < 3; i++) {
             int cell = indexes[i];
             System.out.println("random: "+cell +" i: " + i + " -> " + combination[cell]);
-            if (board[combination[cell]] == "") return combination[cell];
-            else if (board[combination[i]] == "") {
+            if (board[combination[cell]].isEmpty()) return combination[cell];
+            else if (board[combination[i]].isEmpty()) {
                 return combination[i];
             }
         }
@@ -29,8 +29,8 @@ public class Computer{
     }
 
     private static int[] evaluateBoard(String[] board, String symbol) {
-        int winEvaluation = 0;
-        int loseEvaluation = 0;
+        int winEvaluation;
+        int loseEvaluation;
         int highestWinEvaluation = 0;
         int highestLoseEvaluation = 0;
         int[] bestCompination = new int[3];
@@ -58,7 +58,7 @@ public class Computer{
             int counter = 0;
             if (isValid[i]) {
                 for (int j = 0; j < 3; j++) {
-                    if (board[combinations[i][j]] == symbol) {
+                    if (board[combinations[i][j]].equals(symbol)) {
                         counter++;
                         loseEvaluation = 0;
                         winEvaluation++;
@@ -67,7 +67,7 @@ public class Computer{
                             bestCompination = combinations[i];
                         }
                     }
-                    if (board[combinations[i][j]] == (symbol == "○"? "×":"○")) {
+                    if (board[combinations[i][j]].equals (symbol.equals("○")? "×":"○")) {
                         counter++;
                         winEvaluation = 0;
                         loseEvaluation++;
@@ -92,5 +92,4 @@ public class Computer{
             return worstCompination;
         }
     }
-    public void setSymbol(char symbol) {}
 }

@@ -30,7 +30,7 @@ public class EventService {
         for (User user : users) {
             try {
                 for (int i = 0; i < 9; i++) {
-                    System.out.println("sending state " + i + " to user " + user.getId());
+                    //System.out.println("sending state " + i + " to user " + user.getId());
                     emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + i).data("<div class=\"xo\">" + state[i] + "</div>"));
                 }
             } catch (IOException e) {
@@ -42,7 +42,7 @@ public class EventService {
     public void broadcastMove(int cellIndex, String value, List<User> users) {
         for (User user : users) {
             try {
-                System.out.println("sse emits to: " + user.getId());
+                System.out.println("broadcastMove to: " + user.getId());
                 System.out.println("size: " + emitters.size());
                 emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + cellIndex).data(value));
             } catch (IOException e) {
@@ -54,7 +54,7 @@ public class EventService {
     public void broadcastGameStatus(double score1, double score2, List<User> users) {
         for (User user : users) {
             try {
-                System.out.println("sse emits to: " + user.getId());
+                System.out.println("broadcastGameStatus to: " + user.getId());
                 emitters.get(user.getId()).send(SseEmitter.event().name("player:1").data(score1));
                 emitters.get(user.getId()).send(SseEmitter.event().name("player:2").data(score2));
             } catch (IOException e) {
@@ -77,9 +77,9 @@ public class EventService {
         }
     }
 
-    public void notifyPlayer(String id, String clientId) {
+    public void sendEvent(String id, String eventName, String data) {
         try {
-            emitters.get(id).send(SseEmitter.event().name("notifications").data(clientId));
+            emitters.get(id).send(SseEmitter.event().name(eventName).data(data));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
