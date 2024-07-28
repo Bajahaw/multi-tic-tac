@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="htmx.min.js"></script>
     <script src="sse.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 <div class="profile">P</div>
@@ -13,7 +14,7 @@
     <div class="clientId" sse-swap="clientId"></div>
     <div class="player one" hx-get="/reload" hx-trigger="load">
         <div class="result" sse-swap="player:1"> 0</div>
-        <div class="name"> player 1</div>
+        <div class="name" sse-swap="player1name"> player 1</div>
     </div>
     <div class="board">
         <div id="0" class="square top left" hx-post="/move/0" sse-swap="cellUpdate:0">
@@ -46,16 +47,18 @@
     </div>
     <div class="player two">
         <div class="result" sse-swap="player:2"> 0</div>
-        <div class="name" sse-swap="notifications" > player 2</div>
+        <div class="name" sse-swap="player2name" >Computer</div>
     </div>
 </div>
-<form>
+<form onkeydown="return event.key != 'Enter';">
     <div>
         <label>Join game:
-            <input name="gameId" hx-on="keydown[keyCode==13]">
+            <input name="gameId" placeholder="Enter game ID">
         </label>
+        <p class="state"></p>
     </div>
-    <button type="button" class="btn" hx-trigger="click" hx-post="/join">Join</button>
+    <button type="button" class="btn" hx-trigger="click" hx-post="/join" hx-target=".state">Join</button>
+
 </form>
 
 </body>

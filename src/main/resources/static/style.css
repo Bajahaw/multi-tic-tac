@@ -1,3 +1,14 @@
+@media (max-width: 600px) {
+    .player.one{
+        margin-right: 0;
+    }
+    .player.two{
+        margin-left: 0 !important;
+    }
+    .container{
+        flex-direction: column;
+    }
+}
 body{
     background-color: #000;
     color: #fff;
@@ -7,6 +18,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+
 }
 .profile{
     position: absolute;
@@ -97,6 +109,7 @@ input{
     border-radius: 10%;
 }
 .btn{
+    max-height: 20px;
     background-color: black;
     color: white;
     border: 1px solid white;

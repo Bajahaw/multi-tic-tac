@@ -40,6 +40,7 @@ public class GameController {
         //System.out.println("connecting to .. " + clientId);
         SseEmitter emitter = eventService.connect(clientId);
         eventService.sendEvent(clientId, "clientId", clientId);
+        eventService.sendEvent(clientId, "player1name", "player"+clientId);
         eventService.sendInitialState(game.getBoard(), game.users);
         return emitter;
     }
@@ -113,8 +114,8 @@ public class GameController {
         }
 
         game.setPlayerTwo(clientGame.users.getFirst());
-        eventService.sendEvent(gameId, "notifications", clientId);
+        eventService.sendEvent(gameId, "player2name", "player"+clientId);
         eventService.sendInitialState(game.getBoard(), game.users);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("joined game: "    +gameId);
     }
 }
