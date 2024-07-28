@@ -1,12 +1,17 @@
 @media (max-width: 600px) {
     .player.one{
         margin-right: 0;
+        margin-top: 10px;
     }
     .player.two{
         margin-left: 0 !important;
+        margin-top: 0px;
     }
     .container{
         flex-direction: column;
+    }
+    .container .board{
+        padding-top: 10px;
     }
 }
 body{
