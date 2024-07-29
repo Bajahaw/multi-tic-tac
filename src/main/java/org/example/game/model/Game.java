@@ -12,7 +12,7 @@ public class Game {
     User userToMove;
     public double pOneScore = 0;
     public double pTwoScore = 0;
-    public gameStatus status;
+    public GameStatus status;
     public int[] winningLine;
     public int lastMove;
     //-------------------------------------------
@@ -20,7 +20,7 @@ public class Game {
     public Game(User playerOne) {
         this.board = new Board();
         this.users.add(playerOne);
-        this.status = gameStatus.IN_PROGRESS;
+        this.status = GameStatus.IN_PROGRESS;
         playerOne.joinGame(this);
         userToMove = users.getFirst();
     }
@@ -38,7 +38,7 @@ public class Game {
         System.out.println(user.getId() + " -> " + move);
         System.out.println("shouldv been: " + users.getFirst().getId());
         if(move == -1) return false;
-        if(status == gameStatus.IN_PROGRESS && getBoard()[move].isEmpty()){
+        if(status == GameStatus.IN_PROGRESS && getBoard()[move].isEmpty()){
             board.update(move, user.getSymbol());
             lastMove = move;
             userToMove = user == users.getFirst()? users.getLast() : users.getFirst();
@@ -53,29 +53,29 @@ public class Game {
 
     public void reset() {
         Arrays.fill(board.grid, "");
-        status = gameStatus.IN_PROGRESS;
+        status = GameStatus.IN_PROGRESS;
     }
 
-    public gameStatus getStatus() {
+    public GameStatus getStatus() {
         winningLine = checkWinner();
         if (winningLine == null) {
-            if (board.isFull()) return gameStatus.DRAW;
-            return gameStatus.IN_PROGRESS;
+            if (board.isFull()) return GameStatus.DRAW;
+            return GameStatus.IN_PROGRESS;
         }
-        return board.grid[winningLine[0]] .equals( users.getFirst().getSymbol()) ? gameStatus.PLAYER_ONE_WON : gameStatus.PLAYER_TWO_WON;
+        return board.grid[winningLine[0]] .equals( users.getFirst().getSymbol()) ? GameStatus.PLAYER_ONE_WON : GameStatus.PLAYER_TWO_WON;
     }
 
     public void updateStatus() {
         this.status = getStatus();
         switch (status) {
-            case gameStatus.DRAW:
+            case GameStatus.DRAW:
                 pOneScore += 0.5;
                 pTwoScore += 0.5;
                 break;
-            case gameStatus.PLAYER_ONE_WON:
+            case GameStatus.PLAYER_ONE_WON:
                 pOneScore += 1;
                 break;
-            case gameStatus.PLAYER_TWO_WON:
+            case GameStatus.PLAYER_TWO_WON:
                 pTwoScore += 1;
                 break;
         }

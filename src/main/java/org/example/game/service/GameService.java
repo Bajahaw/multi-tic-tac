@@ -33,7 +33,7 @@ public class GameService {
         eventService.sendInitialState(game.getBoard(), game.users);
     }
     public boolean gameEnded(Game game) {
-        return !(game.status == gameStatus.IN_PROGRESS);
+        return !(game.status == GameStatus.IN_PROGRESS);
     }
 
     public void makeMove(Game game) {
@@ -51,7 +51,7 @@ public class GameService {
             }
             if (gameEnded(game)) {
                 eventService.broadcastGameStatus(game.pOneScore, game.pTwoScore, game.users);
-                if(!(game.status == gameStatus.DRAW)) {
+                if(!(game.status == GameStatus.DRAW)) {
                     eventService.broadcastWinner(game.getBoard()[game.winningLine[0]], game.winningLine, game.users);
                 }
             }
