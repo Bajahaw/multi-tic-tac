@@ -26,6 +26,12 @@ public class Game {
     }
 
     public void setPlayerTwo(User playerTwo) {
+        if(playerTwo == users.getFirst()){
+            if(users.size()>1)users.remove(users.getLast());
+            userToMove = users.getFirst();
+            reset();
+            return;
+        }
         playerTwo.symbol = this.users.getFirst().getSymbol().equals("○")? "×":"○";
         this.users.add(playerTwo);
         playerTwo.joinGame(this);

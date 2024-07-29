@@ -1,4 +1,7 @@
 @media (max-width: 600px) {
+    *{
+        -webkit-tap-highlight-color: transparent;
+    }
     .player.one{
         margin-right: 0;
         margin-top: 10px;
@@ -113,15 +116,28 @@ form{
     justify-content: center;
     margin-top: 50px;
 }
+.state{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 140%;
+}
+.btn.red{
+    border: 0;
+    background-color: brown;
+    color: white;
+}
 input{
     max-width: 100px;
+    height: 22px;
     background-color: black;
     color: white;
     border: 1px solid white;
     border-radius: 10%;
 }
 .btn{
-    max-height: 20px;
+    margin-left: 5px;
+    height: 25px;
     background-color: black;
     color: white;
     border: 1px solid white;
