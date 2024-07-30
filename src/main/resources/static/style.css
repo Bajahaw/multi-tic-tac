@@ -21,7 +21,7 @@
         padding-right: 0;
     }
     form{
-            margin-top: 0 !important;
+        margin-top: 0 !important;
     }
 }
 body{
@@ -31,6 +31,7 @@ body{
 }
 .container{
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 
@@ -111,16 +112,19 @@ body{
         opacity: 0;
     }
 }
-form{
+.form{
+    flex-basis: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
     margin-top: 50px;
 }
 .state{
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 140%;
+    margin-top: 5px;
 }
 .btn.red{
     border: 0;
@@ -128,25 +132,27 @@ form{
     color: white;
 }
 input{
-    max-width: 100px;
-    height: 22px;
-    background-color: black;
-    color: white;
-    border: 1px solid white;
-    border-radius: 10%;
-}
-.btn{
-    margin-left: 5px;
+    max-width: 145px;
     height: 25px;
     background-color: black;
     color: white;
     border: 1px solid white;
     border-radius: 10%;
+    margin-bottom: 5px;
+}
+.btn{
+    width: 150px;
+    height: 25px;
+    background-color: white;
+    color: black;
+    border: 1px solid white;
+    border-radius: 10%;
     transition: 0.1s;
 }
 .btn:hover{
-    background-color: white;
-    color: black;
+    background-color: black;
+    color: white;
+    border: 1px solid white;
 }
 .result{
     max-width: 100%;

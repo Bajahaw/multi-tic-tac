@@ -47,18 +47,15 @@
     </div>
     <div class="player two">
         <div class="result" sse-swap="player:2"> 0</div>
-        <div class="name" sse-swap="player2name" >Computer</div>
+        <div class="name" sse-swap="player2name">Computer</div>
     </div>
+    <form class="form" onkeydown="return event.key != 'Enter';">
+        <input name="gameId" placeholder="Enter game ID">
+        <button type="button" class="btn" hx-trigger="click" hx-post="/join">Join</button>
+        <div class="state" sse-swap="state"></div>
+    </form>
 </div>
-<form onkeydown="return event.key != 'Enter';">
-    <div>
-        <label>Join game:
-            <input name="gameId" placeholder="Enter game ID">
-        </label>
-        <p class="state"></p>
-    </div>
-    <button type="button" class="btn" hx-trigger="click" hx-post="/join" hx-target=".state">Join</button>
-</form>
+
 
 </body>
 
