@@ -48,7 +48,6 @@ Multi-Tic-Tac is a simple online multiplayer X-O game built using Spring Boot an
 To build the project, run the following command:
 ```sh
 mvn clean install
-mvn clean package
 ```
 
 ### Running the Application
