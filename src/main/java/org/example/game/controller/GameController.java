@@ -2,6 +2,7 @@ package org.example.game.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.example.game.model.Game;
+import org.example.game.model.User;
 import org.example.game.service.EventService;
 import org.example.game.service.GameService;
 import org.springframework.http.HttpStatus;
@@ -110,8 +111,8 @@ public class GameController {
         }
 
         game.setPlayerTwo(gameService.getGame(clientId).users.getFirst());
-        eventService.sendEvent(clientId, "player2name", "player"+gameId);
-        eventService.sendEvent(gameId, "player2name", "player"+clientId);
+        //eventService.sendEvent(clientId, "player2name", "player"+gameId);
+        //eventService.sendEvent(gameId, "player2name", "player"+clientId);
 
         String button = "<button class=\"btn red\" hx-get=\"/leave\" hx-trigger=\"click\" hx-target=\".state\">leave game</button>";
         eventService.sendEvent(clientId,"state",button);
@@ -119,7 +120,7 @@ public class GameController {
 
         eventService.sendInitialState(game.getBoard(), game.users);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Join");
     }
 
     @GetMapping("/leave")
@@ -133,14 +134,18 @@ public class GameController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Game not connected.");
         }
         game = game.users.getFirst().getGame();
-        game.users.getLast().joinGame(gameService.getGame(clientId));
-        game.setPlayerTwo(game.users.getFirst());
 
-        eventService.sendEvent(clientId,"state","left the game");
-        eventService.sendEvent(game.users.getFirst().getId(),"state",clientId + " left the game");
+        User user1 = game.users.getFirst();
+        User user2 = game.users.getLast();
 
-        eventService.sendInitialState(game.getBoard(), game.users);
-        eventService.sendInitialState(gameService.getGame(clientId).getBoard(), gameService.getGame(clientId).users);
+        user2.joinGame(gameService.getGame(user2.getId()));
+        game.setPlayerTwo(user1);
+
+        //eventService.sendEvent(clientId,"state","left the game");
+        //eventService.sendEvent(clientId.equals(user1.getId()) ? user2.getId(): user1.getId(),"state",clientId + " left the game");
+
+        eventService.sendInitialState(user1.getGame().getBoard(), user1.getGame().users);
+        eventService.sendInitialState(user2.getGame().getBoard(), user2.getGame().users);
         return ResponseEntity.ok(clientId + " left the game");
     }
 }
