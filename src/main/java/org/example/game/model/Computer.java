@@ -1,7 +1,5 @@
 package org.example.game.model;
 
-import java.util.Random;
-
 public class Computer {
 
     public static void makeMove(Game game) {
@@ -16,12 +14,8 @@ public class Computer {
     }
 
     private static int computerMove(String[] board, int[] combination, String symbol) {
-        int[] indexes = {1, 2, 0};
         for (int i = 0; i < 3; i++) {
-            int cell = indexes[i];
-            System.out.println("random: " + cell + " i: " + i + " -> " + combination[cell]);
-            if (board[combination[cell]].isEmpty()) return combination[cell];
-            else if (board[combination[i]].isEmpty()) {
+            if (board[combination[i]].isEmpty()) {
                 return combination[i];
             }
         }
