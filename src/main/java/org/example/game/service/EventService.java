@@ -34,11 +34,10 @@ public class EventService {
                         //System.out.println("sending state " + i + " to user " + user.getId());
                         emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + i).data("<div class=\"xo\">" + state[i] + "</div>"));
                     }
-                    String name = users.size()<2? "Computer" : "player"+ (users.getFirst().getId().equals(user.getId())? users.getLast().getId() : users.getFirst().getId());
-                    emitters.get(user.getId()).send(SseEmitter
-                            .event()
-                            .name("player2name")
-                            .data(name));
+
+                    String name = users.size() < 2 ? "Computer" : "player" + (users.getFirst().getId().equals(user.getId()) ? users.getLast().getId() : users.getFirst().getId());
+                    emitters.get(user.getId()).send(SseEmitter.event().name("player2name").data(name));
+
                 } catch (IOException e) {
                     System.out.println("sendEvent error: Connection with: " + user.getId() + " might be lost -> " + e.getMessage());
                     emitters.remove(user.getId());
@@ -52,10 +51,10 @@ public class EventService {
             try {
                 //System.out.println("broadcastMove to: " + user.getId());
                 //System.out.println("size: " + emitters.size());
-                if(emitters.containsKey(user.getId()))
+                if (emitters.containsKey(user.getId()))
                     emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + cellIndex).data(value));
             } catch (IOException e) {
-                System.out.println("sendEvent error: Connection with: "+user.getId()+" might be lost -> " + e.getMessage());
+                System.out.println("sendEvent error: Connection with: " + user.getId() + " might be lost -> " + e.getMessage());
                 emitters.remove(user.getId());
             }
         }
@@ -65,12 +64,12 @@ public class EventService {
         for (User user : users) {
             try {
                 //System.out.println("broadcastGameStatus to: " + user.getId());
-                if(emitters.containsKey(user.getId())) {
+                if (emitters.containsKey(user.getId())) {
                     emitters.get(user.getId()).send(SseEmitter.event().name("player:1").data(score1));
                     emitters.get(user.getId()).send(SseEmitter.event().name("player:2").data(score2));
                 }
             } catch (IOException e) {
-                System.out.println("sendEvent error: Connection with: "+user.getId()+" might be lost -> " + e.getMessage());
+                System.out.println("sendEvent error: Connection with: " + user.getId() + " might be lost -> " + e.getMessage());
                 emitters.remove(user.getId());
             }
         }
@@ -82,10 +81,10 @@ public class EventService {
                 String data = "<div class=\"xo" + " blink" + "\">" + move + "</div>";
                 try {
                     //System.out.println("winner emits to: " + user.getId());
-                    if(emitters.containsKey(user.getId()))
+                    if (emitters.containsKey(user.getId()))
                         emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + winningLine[i]).data(data));
                 } catch (IOException e) {
-                    System.out.println("sendEvent error: Connection with: "+user.getId()+" might be lost -> " + e.getMessage());
+                    System.out.println("sendEvent error: Connection with: " + user.getId() + " might be lost -> " + e.getMessage());
                     emitters.remove(user.getId());
                 }
             }
@@ -94,22 +93,22 @@ public class EventService {
 
     public void sendEvent(String id, String eventName, String data) {
         try {
-            if(emitters.containsKey(id))
+            if (emitters.containsKey(id))
                 emitters.get(id).send(SseEmitter.event().name(eventName).data(data));
         } catch (IOException e) {
-            System.out.println("sendEvent error: Connection with: "+id+" might be lost -> " + e.getMessage());
+            System.out.println("sendEvent error: Connection with: " + id + " might be lost -> " + e.getMessage());
             emitters.remove(id);
         }
     }
 
     public boolean isClientConnected(String id) {
         SseEmitter emitter = emitters.get(id);
-        if(emitter != null){
+        if (emitter != null) {
             try {
                 emitter.send(SseEmitter.event().name("heartbeat"));
                 return true;
             } catch (IOException e) {
-                System.out.println("sendEvent error: Connection with: "+id+" might be lost -> " + e.getMessage());
+                System.out.println("sendEvent error: Connection with: " + id + " might be lost -> " + e.getMessage());
                 emitters.remove(id);
                 return false;
             }

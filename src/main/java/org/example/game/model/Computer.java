@@ -2,7 +2,7 @@ package org.example.game.model;
 
 import java.util.Random;
 
-public class Computer{
+public class Computer {
 
     public static void makeMove(Game game) {
         try {
@@ -10,16 +10,16 @@ public class Computer{
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        String symbol = game.users.getFirst().getSymbol().equals("○")? "×":"○";
+        String symbol = game.users.getFirst().getSymbol().equals("○") ? "×" : "○";
         game.lastMove = computerMove(game.getBoard(), evaluateBoard(game.getBoard(), symbol), symbol);
-        game.getBoard()[game.lastMove]= symbol;
+        game.getBoard()[game.lastMove] = symbol;
     }
 
     private static int computerMove(String[] board, int[] combination, String symbol) {
-        int[] indexes = {1,2,0};
+        int[] indexes = {1, 2, 0};
         for (int i = 0; i < 3; i++) {
             int cell = indexes[i];
-            System.out.println("random: "+cell +" i: " + i + " -> " + combination[cell]);
+            System.out.println("random: " + cell + " i: " + i + " -> " + combination[cell]);
             if (board[combination[cell]].isEmpty()) return combination[cell];
             else if (board[combination[i]].isEmpty()) {
                 return combination[i];
@@ -67,7 +67,7 @@ public class Computer{
                             bestCompination = combinations[i];
                         }
                     }
-                    if (board[combinations[i][j]].equals (symbol.equals("○")? "×":"○")) {
+                    if (board[combinations[i][j]].equals(symbol.equals("○") ? "×" : "○")) {
                         counter++;
                         winEvaluation = 0;
                         loseEvaluation++;

@@ -1,42 +1,50 @@
 @media (max-width: 600px) {
-    *{
+    * {
         -webkit-tap-highlight-color: transparent;
     }
-    .player.one{
+
+    .player.one {
         margin-right: 0;
         margin-top: 10px;
     }
-    .player.two{
+
+    .player.two {
         margin-left: 0 !important;
         margin-top: 0;
     }
-    .container{
+
+    .container {
         flex-direction: column;
     }
-    .container .board{
+
+    .container .board {
         width: 300px;
         height: 300px;
         padding-top: 10px;
         padding-left: 0;
         padding-right: 0;
     }
-    form{
+
+    form {
         margin-top: 0 !important;
     }
 }
-body{
+
+body {
     background-color: #000;
     color: #fff;
     font-family: sans-serif;
 }
-.container{
+
+.container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
 
 }
-.profile{
+
+.profile {
     position: absolute;
     cursor: pointer;
     top: 15px;
@@ -50,7 +58,8 @@ body{
     justify-content: center;
     transition: 0.1s;
 }
-.clientId{
+
+.clientId {
     position: absolute;
     cursor: pointer;
     display: flex;
@@ -64,11 +73,13 @@ body{
     align-items: center;
     transition: 0.1s;
 }
-.profile:hover{
+
+.profile:hover {
     background-color: white;
     color: black;
 }
-.board{
+
+.board {
     width: 390px;
     height: 390px;
     position: relative;
@@ -76,7 +87,8 @@ body{
     padding-left: 50px;
     padding-right: 50px;
 }
-.xo{
+
+.xo {
     width: 90%;
     height: 90%;
     font-size: 150px;
@@ -84,11 +96,12 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    -webkit-user-select: none;  /* Safari */
-    -ms-user-select: none;      /* IE 10 and IE 11 */
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none;
     animation: pop 0.2s ease-in-out;
 }
+
 @keyframes pop {
     0% {
         transform: scale(0.6);
@@ -100,10 +113,12 @@ body{
         transform: scale(1);
     }
 }
-.xo.blink{
+
+.xo.blink {
     animation: winning 0.3s steps(2, jump-none);
     animation-iteration-count: 3;
 }
+
 @keyframes winning {
     0% {
         opacity: 1;
@@ -112,7 +127,8 @@ body{
         opacity: 0;
     }
 }
-.form{
+
+.form {
     flex-basis: 100%;
     display: flex;
     justify-content: center;
@@ -120,18 +136,21 @@ body{
     flex-direction: column;
     margin-top: 50px;
 }
-.state{
+
+.state {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 5px;
 }
-.btn.red{
+
+.btn.red {
     border: 0;
     background-color: brown;
     color: white;
 }
-input{
+
+input {
     max-width: 145px;
     height: 25px;
     background-color: black;
@@ -140,7 +159,8 @@ input{
     border-radius: 10%;
     margin-bottom: 5px;
 }
-.btn{
+
+.btn {
     width: 150px;
     height: 25px;
     background-color: white;
@@ -149,21 +169,25 @@ input{
     border-radius: 10%;
     transition: 0.1s;
 }
-.btn:hover{
+
+.btn:hover {
     background-color: black;
     color: white;
     border: 1px solid white;
 }
-.result{
+
+.result {
     max-width: 100%;
     height: auto;
     font-size: 36px;
 }
-.name{
+
+.name {
     margin-top: 20px;
     text-align: center;
 }
-.player{
+
+.player {
     height: 200px;
     width: 200px;
     margin-right: 100px;
@@ -173,11 +197,13 @@ input{
     align-items: center;
     justify-content: center;
 }
-.player.two{
+
+.player.two {
     margin-left: 100px;
     margin-right: 0;
 }
-.square{
+
+.square {
     float: left;
     cursor: pointer;
     width: 32%;
@@ -188,15 +214,19 @@ input{
     align-items: center;
     justify-content: center;
 }
-.square.top{
+
+.square.top {
     border-top: black;
 }
-.square.bottom{
+
+.square.bottom {
     border-bottom: black;
 }
-.square.left{
+
+.square.left {
     border-left: black;
 }
-.square.right{
+
+.square.right {
     border-right: black;
 }

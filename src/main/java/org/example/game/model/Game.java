@@ -26,13 +26,13 @@ public class Game {
     }
 
     public void setPlayerTwo(User playerTwo) {
-        if(playerTwo == users.getFirst()){
-            if(users.size()>1)users.remove(users.getLast());
+        if (playerTwo == users.getFirst()) {
+            if (users.size() > 1) users.remove(users.getLast());
             userToMove = users.getFirst();
             reset();
             return;
         }
-        playerTwo.symbol = this.users.getFirst().getSymbol().equals("○")? "×":"○";
+        playerTwo.symbol = this.users.getFirst().getSymbol().equals("○") ? "×" : "○";
         this.users.add(playerTwo);
         playerTwo.joinGame(this);
         reset();
@@ -43,11 +43,11 @@ public class Game {
         int move = user.getMove();
         System.out.println(user.getId() + " -> " + move);
         System.out.println("shouldv been: " + users.getFirst().getId());
-        if(move == -1) return false;
-        if(status == GameStatus.IN_PROGRESS && getBoard()[move].isEmpty()){
+        if (move == -1) return false;
+        if (status == GameStatus.IN_PROGRESS && getBoard()[move].isEmpty()) {
             board.update(move, user.getSymbol());
             lastMove = move;
-            userToMove = user == users.getFirst()? users.getLast() : users.getFirst();
+            userToMove = user == users.getFirst() ? users.getLast() : users.getFirst();
             return true;
         }
         return false;
@@ -68,7 +68,7 @@ public class Game {
             if (board.isFull()) return GameStatus.DRAW;
             return GameStatus.IN_PROGRESS;
         }
-        return board.grid[winningLine[0]] .equals( users.getFirst().getSymbol()) ? GameStatus.PLAYER_ONE_WON : GameStatus.PLAYER_TWO_WON;
+        return board.grid[winningLine[0]].equals(users.getFirst().getSymbol()) ? GameStatus.PLAYER_ONE_WON : GameStatus.PLAYER_TWO_WON;
     }
 
     public void updateStatus() {

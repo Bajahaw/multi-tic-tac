@@ -13,25 +13,26 @@ public class GameService {
     private final Map<String, Game> activeGames = new ConcurrentHashMap<>();
     //-------------------------------------------------
 
-    public GameService(EventService eventService){
+    public GameService(EventService eventService) {
         this.eventService = eventService;
     }
 
-    public void createGame(String id){
-        Game game = new Game(new User(id, "User",  "×"));
+    public void createGame(String id) {
+        Game game = new Game(new User(id, "User", "×"));
         //System.out.println("this might be null, is it? "+id);
         activeGames.put(id, game);
     }
 
     public Game getGame(String id) {
-        if(id == null) return null;
+        if (id == null) return null;
         return activeGames.get(id);
     }
 
-    public void reset(Game game){
+    public void reset(Game game) {
         game.reset();
         eventService.sendInitialState(game.getBoard(), game.users);
     }
+
     public boolean gameEnded(Game game) {
         return !(game.status == GameStatus.IN_PROGRESS);
     }
@@ -43,7 +44,7 @@ public class GameService {
             String move = game.getBoard()[game.lastMove];
             eventService.broadcastMove(game.lastMove, "<div class=\"xo\">" + move + "</div>", game.users);
 
-            if(game.users.size()<2 && !gameEnded(game)) {
+            if (game.users.size() < 2 && !gameEnded(game)) {
                 Computer.makeMove(game);
                 move = game.getBoard()[game.lastMove];
                 eventService.broadcastMove(game.lastMove, "<div class=\"xo\">" + move + "</div>", game.users);
@@ -51,7 +52,7 @@ public class GameService {
             }
             if (gameEnded(game)) {
                 eventService.broadcastGameStatus(game.pOneScore, game.pTwoScore, game.users);
-                if(!(game.status == GameStatus.DRAW)) {
+                if (!(game.status == GameStatus.DRAW)) {
                     eventService.broadcastWinner(game.getBoard()[game.winningLine[0]], game.winningLine, game.users);
                 }
             }

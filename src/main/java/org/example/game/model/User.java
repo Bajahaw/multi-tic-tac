@@ -15,24 +15,35 @@ public class User {
 
     public User(String id, String name, String symbol) {
         this.id = id;
-        this.name = name+ Random.from(new Random()).nextInt(10);
+        this.name = name + Random.from(new Random()).nextInt(10);
         this.symbol = symbol;
         index++;
     }
 
-    public String getId() { return id; }
-    public String getName() { return name; }
-    public String getSymbol() { return symbol; }
-    public double getScore() { return score; }
+    public String getId() {
+        return id;
+    }
 
-    public int getMove(){
+    public String getName() {
+        return name;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public int getMove() {
         int temp = move;
         move = -1;
         return temp;
     }
 
     public void updateMove(int cellIndex) {
-        if(game.userToMove == this)
+        if (game.userToMove == this)
             move = cellIndex;
     }
 
