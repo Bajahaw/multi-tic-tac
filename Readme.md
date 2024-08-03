@@ -1,7 +1,7 @@
 # Multi-Tic-Tac
 
 ## Description
-Multi-Tic-Tac is a simple online multiplayer X-O game built using Spring Boot and HTMX. The application allows multiple users to play Tic-Tac-Toe in real-time.
+Multi-Tic-Tac is a simple online multiplayer X-O game built using Spring Boot and HTMX. The application allows multiple users to play Tic-Tac-Toe in real-time. You can look at the page from here : https://bajahaw.github.io/multi-tic-tac/src/main/resources/static/index.html
 
 ## Project Structure
 
