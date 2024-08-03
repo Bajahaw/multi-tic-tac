@@ -5,6 +5,7 @@ import org.example.game.model.Game;
 import org.example.game.model.User;
 import org.example.game.service.EventService;
 import org.example.game.service.GameService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,9 +21,15 @@ import java.util.Random;
 public class GameController {
 
     //--------------------------------------------
-    EventService eventService = new EventService();
-    GameService gameService = new GameService(eventService);
+    private final EventService eventService;
+    private final GameService gameService;
     //--------------------------------------------
+
+    @Autowired
+    public GameController(EventService eventService, GameService gameService) {
+        this.eventService = eventService;
+        this.gameService = gameService;
+    }
 
     @GetMapping("/connect")
     public SseEmitter connect(HttpSession session) {
