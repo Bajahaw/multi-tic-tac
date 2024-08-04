@@ -1,5 +1,6 @@
 package org.example.game.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +15,7 @@ public class Game {
     public double pTwoScore = 0;
     public GameStatus status;
     public int[] winningLine;
+    private LocalDateTime lastActivityTime;
     public int lastMove;
     //-------------------------------------------
 
@@ -21,6 +23,7 @@ public class Game {
         this.board = new Board();
         this.users.add(playerOne);
         this.status = GameStatus.IN_PROGRESS;
+        this.lastActivityTime = LocalDateTime.now();
         playerOne.joinGame(this);
         userToMove = users.getFirst();
     }
@@ -60,6 +63,8 @@ public class Game {
     public void reset() {
         Arrays.fill(board.grid, "");
         status = GameStatus.IN_PROGRESS;
+        pOneScore = 0;
+        pTwoScore = 0;
     }
 
     public GameStatus getStatus() {
@@ -99,5 +104,11 @@ public class Game {
         return null;
     }
 
+    public void setLastActivityTime(LocalDateTime lastActivityTime) {
+        this.lastActivityTime = lastActivityTime;
+    }
 
+    public boolean isInactive(LocalDateTime now) {
+        return lastActivityTime.isBefore(now.minusMinutes(10));
+    }
 }

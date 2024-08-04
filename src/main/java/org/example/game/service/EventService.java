@@ -116,7 +116,7 @@ public class EventService {
         return false;
     }
 
-    public SseEmitter getEmitter(String id) {
-        return emitters.get(id);
+    public void disConnect(String id) {
+        emitters.remove(id);
     }
 }

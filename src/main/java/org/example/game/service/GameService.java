@@ -1,8 +1,11 @@
 package org.example.game.service;
 
 import org.example.game.model.*;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -38,6 +41,8 @@ public class GameService {
     }
 
     public void makeMove(Game game) {
+        game.setLastActivityTime(LocalDateTime.now());
+        System.out.println("time updated");
         boolean moved = game.makeMove();
         if (moved) {
             game.updateStatus();
@@ -59,6 +64,20 @@ public class GameService {
 
         } else if (gameEnded(game)) {
             reset(game);
+        }
+    }
+
+    @Scheduled(fixedRate = 600000)
+    public void removeInactiveGames() {
+        System.out.println("Active games: " + activeGames.size());
+        LocalDateTime now = LocalDateTime.now();
+        Iterator<Game> iterator = activeGames.values().iterator();
+        while (iterator.hasNext()) {
+            Game game = iterator.next();
+            if (game.isInactive(now)) {
+                eventService.disConnect(game.users.getFirst().getId());
+                iterator.remove();
+            }
         }
     }
 
