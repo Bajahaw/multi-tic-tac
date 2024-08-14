@@ -33,7 +33,6 @@ public class GameController {
 
     @GetMapping("/connect")
     public SseEmitter connect(HttpSession session) {
-        //System.out.println("Connecting");
         String clientId = (String) session.getAttribute("clientId");
         if (clientId == null) {
             clientId = "" + Random.from(new Random(System.currentTimeMillis())).nextInt(10000, 100000);
@@ -43,11 +42,10 @@ public class GameController {
         Game game = gameService.getGame(clientId);
         if (game == null) {
             gameService.createGame(clientId);
-            game = gameService.getGame(clientId);
         }
-        game = game.users.getFirst().getGame();
 
-        //System.out.println("connecting to .. " + clientId);
+        game = gameService.getUser(clientId).getGame();
+
         SseEmitter emitter = eventService.connect(clientId);
         eventService.sendEvent(clientId, "clientId", clientId);
         eventService.sendEvent(clientId, "player1name", "player" + clientId);
@@ -58,16 +56,13 @@ public class GameController {
     @PostMapping("/move/{cellIndex}")
     public ResponseEntity<String> makeMove(@PathVariable int cellIndex, HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
-        if (clientId == null || !eventService.isClientConnected(clientId)) {
+        User curUuser = gameService.getUser(clientId);
+        if (curUuser == null || !eventService.isClientConnected(clientId)) {
             return ResponseEntity.notFound().build();
         }
-        Game game = gameService.getGame(clientId).users.getFirst().getGame();
-        ///System.out.println(game.users.getFirst().getId() + " <-> " + game.users.getLast().getId() + " : " + clientId);
+        Game game = curUuser.getGame();
         game.users.forEach(user -> {
-            ///System.out.println("user id: " + user.getId());
-            ///System.out.println("client id: " + clientId);
             if (user.getId().equals(clientId)) {
-                //System.out.println("made move: " + user.getId());
                 user.updateMove(cellIndex);
                 gameService.makeMove(game);
             }
@@ -78,10 +73,11 @@ public class GameController {
     @GetMapping("/reload")
     public ResponseEntity<String> reload(HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
-        if (clientId == null || !eventService.isClientConnected(clientId)) {
+        User currUser = gameService.getUser(clientId);
+        if (currUser == null || !eventService.isClientConnected(clientId)) {
             return ResponseEntity.noContent().build();
         }
-        Game game = gameService.getGame(clientId).users.getFirst().getGame();
+        Game game = currUser.getGame();
         if (game == null) {
             return ResponseEntity.noContent().build();
         }
@@ -98,27 +94,26 @@ public class GameController {
 
     @PostMapping("/join")
     public ResponseEntity<String> join(HttpSession session, @RequestParam String gameId) { // Changed to RequestParam
+
         String clientId = (String) session.getAttribute("clientId");
 
-        if (clientId == null || !eventService.isClientConnected(clientId)) {
+        if (gameService.getUser(clientId) == null || !eventService.isClientConnected(clientId)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Client not connected.");
         }
 
-        Game game = gameService.getGame(gameId);
-        if (game == null || !eventService.isClientConnected(gameId)) {
+        User user = gameService.getUser(gameId);
+        if (user == null || !eventService.isClientConnected(gameId)) {
             eventService.sendEvent(clientId, "state", "game not found or user not connected");
             return ResponseEntity.badRequest().body("game not found or user not connected");
         }
-        System.out.println("got game: " + gameId);
-        System.out.println("got game: " + clientId);
-        if (game.users.size() > 1) {
+
+        if (!user.isFree() || user == gameService.getUser(clientId)) {
             eventService.sendEvent(clientId, "state", "Game already has two players.");
             return ResponseEntity.badRequest().body("Game already has two players.");
         }
 
-        game.setPlayerTwo(gameService.getGame(clientId).users.getFirst());
-        //eventService.sendEvent(clientId, "player2name", "player"+gameId);
-        //eventService.sendEvent(gameId, "player2name", "player"+clientId);
+        Game game = user.getGame();
+        game.setPlayerTwo(gameService.getUser(clientId));
 
         String button = "<button class=\"btn red\" hx-get=\"/leave\" hx-trigger=\"click\" hx-target=\".state\">leave game</button>";
         eventService.sendEvent(clientId, "btnleave", button);
@@ -131,15 +126,13 @@ public class GameController {
 
     @GetMapping("/leave")
     public ResponseEntity<String> leave(HttpSession session) {
+
         String clientId = (String) session.getAttribute("clientId");
-        if (clientId == null || !eventService.isClientConnected(clientId)) {
+        if (gameService.getUser(clientId) == null || !eventService.isClientConnected(clientId)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Connection error.");
         }
-        Game game = gameService.getGame(clientId);
-        if (game == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Game not connected.");
-        }
-        game = game.users.getFirst().getGame();
+
+        Game game = gameService.getUser(clientId).getGame();
 
         User user1 = game.users.getFirst();
         User user2 = game.users.getLast();

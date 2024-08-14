@@ -22,13 +22,18 @@ public class GameService {
 
     public void createGame(String id) {
         Game game = new Game(new User(id, "User", "×"));
-        //System.out.println("this might be null, is it? "+id);
         activeGames.put(id, game);
     }
 
     public Game getGame(String id) {
         if (id == null) return null;
         return activeGames.get(id);
+    }
+
+    public User getUser(String id) {
+        Game game = getGame(id);
+        if (game == null) return null;
+        return game.users.getFirst();
     }
 
     public void reset(Game game) {
@@ -42,7 +47,6 @@ public class GameService {
 
     public void makeMove(Game game) {
         game.setLastActivityTime(LocalDateTime.now());
-        System.out.println("time updated");
         boolean moved = game.makeMove();
         if (moved) {
             game.updateStatus();

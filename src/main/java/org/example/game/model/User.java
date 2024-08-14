@@ -54,4 +54,8 @@ public class User {
     public Game getGame() {
         return game;
     }
+
+    public boolean isFree() {
+        return game.users.size() < 2;
+    }
 }
