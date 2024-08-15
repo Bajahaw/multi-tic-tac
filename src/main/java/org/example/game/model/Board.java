@@ -2,10 +2,14 @@ package org.example.game.model;
 
 public class Board {
     //----------------------------------
-    public final String[] grid;
+    private final String[] grid;
     //----------------------------------
     public Board() {
         this.grid = new String[]{"","","","","","","","",""};
+    }
+
+    public String[] getGrid() {
+        return grid;
     }
 
     public void update(int id, String symbol) {
@@ -13,9 +17,7 @@ public class Board {
     }
 
     public boolean isFull() {
-        for (String cell : grid) {
-            if (cell.isEmpty()) return false;
-        }
+        for (String cell : grid) if (cell.isEmpty()) return false;
         return true;
     }
 }
