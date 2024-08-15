@@ -43,7 +43,7 @@ public class User {
     }
 
     public void updateMove(int cellIndex) {
-        if (game.userToMove == this)
+        if (game.userToMove == this && (cellIndex < 9 && cellIndex > -1))
             move = cellIndex;
     }
 

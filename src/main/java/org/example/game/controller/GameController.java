@@ -39,17 +39,16 @@ public class GameController {
             session.setAttribute("clientId", clientId);
         }
 
-        Game game = gameService.getGame(clientId);
-        if (game == null) {
+        User user = gameService.getUser(clientId);
+        if (user == null) {
             gameService.createGame(clientId);
+            user = gameService.getUser(clientId);
         }
-
-        game = gameService.getUser(clientId).getGame();
 
         SseEmitter emitter = eventService.connect(clientId);
         eventService.sendEvent(clientId, "clientId", clientId);
         eventService.sendEvent(clientId, "player1name", "player" + clientId);
-        eventService.sendInitialState(game.getBoard(), game.users);
+        eventService.sendInitialState(user.getGame().getBoard(), user.getGame().users);
         return emitter;
     }
 
