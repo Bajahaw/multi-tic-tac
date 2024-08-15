@@ -33,6 +33,8 @@ public class EventService {
                         emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + i).data("<div class=\"xo\">" + state[i] + "</div>"));
                     }
 
+                    broadcastGameStatus(user.getGame().pOneScore, user.getGame().pTwoScore, List.of(user));
+
                     String name = users.size() < 2 ? "Computer" : "player" + (users.getFirst().getId().equals(user.getId()) ? users.getLast().getId() : users.getFirst().getId());
                     emitters.get(user.getId()).send(SseEmitter.event().name("player2name").data(name));
 

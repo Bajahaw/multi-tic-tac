@@ -2,7 +2,6 @@ package org.example.game.model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Game {
@@ -33,19 +32,25 @@ public class Game {
             if (users.size() > 1) users.remove(users.getLast());
             userToMove = users.getFirst();
             reset();
+            resetScore();
             return;
         }
         playerTwo.symbol = this.users.getFirst().getSymbol().equals("○") ? "×" : "○";
         this.users.add(playerTwo);
         playerTwo.joinGame(this);
         reset();
+        resetScore();
+    }
+
+    private void resetScore() {
+        pOneScore = 0;
+        pTwoScore = 0;
     }
 
     public boolean makeMove() {
         User user = userToMove;
         int move = user.getMove();
-        System.out.println(user.getId() + " -> " + move);
-        // System.out.println("shouldv been: " + users.getFirst().getId());
+
         if (move == -1) return false;
         if (status == GameStatus.IN_PROGRESS && getBoard()[move].isEmpty()) {
             board.update(move, user.getSymbol());
@@ -57,14 +62,13 @@ public class Game {
     }
 
     public String[] getBoard() {
-        return board.grid;
+        return board.getGrid();
     }
 
     public void reset() {
-        Arrays.fill(board.grid, "");
+        for(int i=0; i<board.getGrid().length; i++)
+            board.update(i, "");
         status = GameStatus.IN_PROGRESS;
-        pOneScore = 0;
-        pTwoScore = 0;
     }
 
     public GameStatus getStatus() {
@@ -73,7 +77,7 @@ public class Game {
             if (board.isFull()) return GameStatus.DRAW;
             return GameStatus.IN_PROGRESS;
         }
-        return board.grid[winningLine[0]].equals(users.getFirst().getSymbol()) ? GameStatus.PLAYER_ONE_WON : GameStatus.PLAYER_TWO_WON;
+        return board.getGrid()[winningLine[0]].equals(users.getFirst().getSymbol()) ? GameStatus.PLAYER_ONE_WON : GameStatus.PLAYER_TWO_WON;
     }
 
     public void updateStatus() {
@@ -95,9 +99,9 @@ public class Game {
     private int[] checkWinner() {
         int[][] lines = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
         for (int[] line : lines) {
-            if (!board.grid[line[0]].isEmpty()
-                    && board.grid[line[0]].equals(board.grid[line[1]])
-                    && board.grid[line[1]].equals(board.grid[line[2]])) {
+            if (!board.getGrid()[line[0]].isEmpty()
+                    && board.getGrid()[line[0]].equals(board.getGrid()[line[1]])
+                    && board.getGrid()[line[1]].equals(board.getGrid()[line[2]])) {
                 return line;
             }
         }
