@@ -12,6 +12,8 @@ The full project is hosted on Render: https://multi-tic-tac.onrender.com
 ├── .github/
 ├── .idea/
 ├── pom.xml
+├── Dockerfile
+├── Readme.md
 └── src/
     └── main/
         ├── java/
