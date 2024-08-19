@@ -25,7 +25,6 @@ public class GameController {
     private final GameService gameService;
     //--------------------------------------------
 
-    @Autowired
     public GameController(EventService eventService, GameService gameService) {
         this.eventService = eventService;
         this.gameService = gameService;
