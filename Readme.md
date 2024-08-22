@@ -1,9 +1,14 @@
 # Multi-Tic-Tac
 
+<div align="center">
+  <a href="https://www.codefactor.io/repository/github/bajahaw/multi-tic-tac/overview/master"><img src="https://www.codefactor.io/repository/github/bajahaw/multi-tic-tac/badge/master" alt="CodeFactor" /></a>
+</div>
+
 ## Description
 Multi-Tic-Tac is a simple online multiplayer X-O game built using Spring Boot and HTMX. The application allows multiple users to play Tic-Tac-Toe in real-time. You can take a look at the static site from here : https://bajahaw.github.io/multi-tic-tac/src/main/resources/static/index.html
 
 The full project is hosted on Render: https://multi-tic-tac.onrender.com
+note that it might take long time to open due to free Render account limitations.
 
 ## Project Structure
 
@@ -12,6 +17,8 @@ The full project is hosted on Render: https://multi-tic-tac.onrender.com
 ├── .github/
 ├── .idea/
 ├── pom.xml
+├── Dockerfile
+├── Readme.md
 └── src/
     └── main/
         ├── java/
