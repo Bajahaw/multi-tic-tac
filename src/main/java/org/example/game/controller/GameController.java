@@ -42,7 +42,7 @@ public class GameController {
 
         SseEmitter emitter = eventService.connect(clientId);
         eventService.sendEvent(clientId, "clientId", clientId);
-        eventService.sendEvent(clientId, "player1name", "player" + clientId);
+        eventService.sendEvent(clientId, "player1name", user.getName());
         eventService.sendInitialState(user.getGame().getBoard(), user.getGame().users);
         return emitter;
     }
@@ -94,8 +94,8 @@ public class GameController {
     public ResponseEntity<String> join(HttpSession session, @RequestParam String gameId) {
 
         String clientId = (String) session.getAttribute("clientId");
-
-        if (gameService.getUser(clientId) == null || !eventService.isClientConnected(clientId)) {
+        User curUser = gameService.getUser(clientId);
+        if (curUser == null || !eventService.isClientConnected(clientId)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Client not connected.");
         }
 
@@ -105,17 +105,17 @@ public class GameController {
             return ResponseEntity.badRequest().body("game not found or user not connected");
         }
 
-        if (!user.isFree() || user == gameService.getUser(clientId)) {
+        if (!user.isFree() || user == curUser) {
             eventService.sendEvent(clientId, "state", "Game already has two players.");
             return ResponseEntity.badRequest().body("Game already has two players.");
         }
 
         Game game = user.getGame();
-        game.setUserOnHold(gameService.getUser(clientId));
+        game.setUserOnHold(curUser);
 
         //--------- Join request
 
-        String button = "<button class=\"btn red\" hx-get=\"/accept\" hx-trigger=\"click\" hx-target=\".state\">Accept join request</button>";
+        String button = "<button class=\"btn green\" hx-get=\"/accept\" hx-trigger=\"click\" hx-target=\".state\">Join "+curUser.getName()+"</button>";
         eventService.sendEvent(clientId, "state", "Invitation sent ...");
         eventService.sendEvent(gameId, "btnleave", button);
 

@@ -4,7 +4,6 @@ import java.util.Random;
 
 public class User {
     //-------------------------
-    public static int index = 0;
     protected final String id;
     protected final String name;
     protected String symbol;
@@ -15,9 +14,8 @@ public class User {
 
     public User(String id, String name, String symbol) {
         this.id = id;
-        this.name = name + Random.from(new Random()).nextInt(10);
+        this.name = "player" + id;
         this.symbol = symbol;
-        index++;
     }
 
     public String getId() {

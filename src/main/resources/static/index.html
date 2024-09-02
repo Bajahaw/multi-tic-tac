@@ -32,7 +32,7 @@
         <div class="name" sse-swap="player2name">Computer</div>
     </div>
     <form class="form" onkeydown="return event.key != 'Enter';">
-        <input name="gameId" placeholder="Enter game ID">
+        <input name="gameId" placeholder="Enter user ID">
         <button type="button" class="btn" hx-trigger="click" hx-post="/join">Invite</button>
         <div class="state" sse-swap="btnleave"></div>
         <div class="state" sse-swap="state"></div>

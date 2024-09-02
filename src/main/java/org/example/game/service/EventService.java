@@ -35,7 +35,8 @@ public class EventService {
 
                     broadcastGameStatus(user.getGame().pOneScore, user.getGame().pTwoScore, List.of(user));
 
-                    String name = users.size() < 2 ? "Computer" : "player" + (users.getFirst().getId().equals(user.getId()) ? users.getLast().getId() : users.getFirst().getId());
+                    //These long if conditions are to display the other user name for each user
+                    String name = users.size() < 2 ? "Computer" : (users.getFirst().getId().equals(user.getId()) ? users.getLast().getName() : users.getFirst().getName());
                     emitters.get(user.getId()).send(SseEmitter.event().name("player2name").data(name));
 
                 } catch (IOException e) {
