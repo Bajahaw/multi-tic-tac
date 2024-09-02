@@ -9,7 +9,8 @@ public class Game {
     //-------------------------------------------
     private final Board board;
     public final List<User> users = new ArrayList<>();
-    User userToMove;
+    private User userToMove;
+    private User userOnHold;
     public double pOneScore = 0;
     public double pTwoScore = 0;
     public GameStatus status;
@@ -114,5 +115,17 @@ public class Game {
 
     public boolean isInactive(LocalDateTime now) {
         return lastActivityTime.isBefore(now.minusMinutes(10));
+    }
+
+    public User getUserToMove() {
+        return userToMove;
+    }
+
+    public User getUserOnHold() {
+        return userOnHold;
+    }
+
+    public void setUserOnHold(User userOnHold) {
+        this.userOnHold = userOnHold;
     }
 }

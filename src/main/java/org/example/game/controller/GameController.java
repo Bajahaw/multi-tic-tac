@@ -5,14 +5,10 @@ import org.example.game.model.Game;
 import org.example.game.model.User;
 import org.example.game.service.EventService;
 import org.example.game.service.GameService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Random;
@@ -86,12 +82,16 @@ public class GameController {
             eventService.sendEvent(clientId, "player2name", "player" + (id.equals(clientId) ? game.users.getLast().getId() : id));
             eventService.broadcastGameStatus(game.pOneScore, game.pTwoScore, game.users);
         }
-        eventService.sendInitialState(game.getBoard(), game.users.stream().filter(user -> user.getId().equals(clientId)).toList());
+        eventService.sendInitialState(game.getBoard(),
+                game.users
+                        .stream()
+                        .filter(user -> user.getId().equals(clientId))
+                        .toList());
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/join")
-    public ResponseEntity<String> join(HttpSession session, @RequestParam String gameId) { // Changed to RequestParam
+    public ResponseEntity<String> join(HttpSession session, @RequestParam String gameId) {
 
         String clientId = (String) session.getAttribute("clientId");
 
@@ -111,15 +111,35 @@ public class GameController {
         }
 
         Game game = user.getGame();
-        game.setPlayerTwo(gameService.getUser(clientId));
+        game.setUserOnHold(gameService.getUser(clientId));
+
+        //--------- Join request
+
+        String button = "<button class=\"btn red\" hx-get=\"/accept\" hx-trigger=\"click\" hx-target=\".state\">Accept join request</button>";
+        eventService.sendEvent(clientId, "state", "Invitation sent ...");
+        eventService.sendEvent(gameId, "btnleave", button);
+
+        return ResponseEntity.ok("Invite");
+    }
+
+    @GetMapping("/accept")
+    public ResponseEntity<String> accept(HttpSession session) {
+        String clientId = (String) session.getAttribute("clientId");
+        User curUser = gameService.getUser(clientId);
+        if (curUser == null || !eventService.isClientConnected(clientId)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Client not connected.");
+        }
+
+        Game game = curUser.getGame();
+        game.setPlayerTwo(game.getUserOnHold());
 
         String button = "<button class=\"btn red\" hx-get=\"/leave\" hx-trigger=\"click\" hx-target=\".state\">leave game</button>";
-        eventService.sendEvent(clientId, "btnleave", button);
-        eventService.sendEvent(gameId, "btnleave", button);
+        eventService.sendEvent(game.users.getFirst().getId(), "btnleave", button);
+        eventService.sendEvent(game.users.getLast().getId(), "btnleave", button);
 
         eventService.sendInitialState(game.getBoard(), game.users);
 
-        return ResponseEntity.ok("Join");
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/leave")
