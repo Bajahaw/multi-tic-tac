@@ -3,6 +3,7 @@ package org.example.game.service;
 import org.example.game.model.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
@@ -21,7 +22,7 @@ public class GameService {
     }
 
     public void createGame(String id) {
-        Game game = new Game(new User(id, "User", "×"));
+        Game game = new Game( new User(id, "player" + id, "×"));
         activeGames.put(id, game);
     }
 
@@ -74,6 +75,7 @@ public class GameService {
     @Scheduled(fixedRate = 600000)
     public void removeInactiveGames() {
         System.out.println("Active games: " + activeGames.size());
+
         LocalDateTime now = LocalDateTime.now();
         Iterator<Game> iterator = activeGames.values().iterator();
         while (iterator.hasNext()) {
@@ -83,6 +85,27 @@ public class GameService {
                 iterator.remove();
             }
         }
+
+        try { // keep the server alive
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getForObject("http://localhost:10000/connect", String.class);
+        } catch (Exception e) {
+            System.out.println("Failed to make self-request: " + e);
+        }
     }
 
+    public User getRandmoUser(String id) {
+        return activeGames
+                .values()
+                .stream().filter(c ->
+
+                                c.users.size()<2 &&
+                                c.getUserOnHold() == null &&
+                                !c.users.getFirst().getId().equals(id) &&
+                                eventService.isClientConnected(c.users.getFirst().getId()))
+
+                .findFirst()
+                .map(c -> c.users.getFirst())
+                .orElse(null);
+    }
 }

@@ -90,6 +90,30 @@ public class GameController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/random")
+    public ResponseEntity<String> random(HttpSession session) {
+        String clientId = (String) session.getAttribute("clientId");
+        User curUser = gameService.getUser(clientId);
+        if (curUser == null || !eventService.isClientConnected(clientId)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Client not connected.");
+        }
+
+        User opponent = gameService.getRandmoUser(curUser.getId());
+        if(opponent == null) {
+            eventService.sendEvent(clientId, "state", "Seems that no opponents online!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        System.out.println("opponent: " + opponent.getName());
+
+        Game game = opponent.getGame();
+        game.setUserOnHold(curUser);
+        String btnAccept = "<button class=\"btn green\" hx-get=\"/accept\" hx-trigger=\"click\" hx-target=\".state\">Join "+curUser.getName()+"</button>";
+        eventService.sendEvent(clientId, "state", "Invitation sent ...");
+        eventService.sendEvent(opponent.getId(), "btnleave", btnAccept);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("something went wrong!");
+    }
+
     @PostMapping("/join")
     public ResponseEntity<String> join(HttpSession session, @RequestParam String gameId) {
 
@@ -115,9 +139,9 @@ public class GameController {
 
         //--------- Join request
 
-        String button = "<button class=\"btn green\" hx-get=\"/accept\" hx-trigger=\"click\" hx-target=\".state\">Join "+curUser.getName()+"</button>";
+        String btnAccept = "<button class=\"btn green\" hx-get=\"/accept\" hx-trigger=\"click\" hx-target=\".state\">Join "+curUser.getName()+"</button>";
         eventService.sendEvent(clientId, "state", "Invitation sent ...");
-        eventService.sendEvent(gameId, "btnleave", button);
+        eventService.sendEvent(gameId, "btnleave", btnAccept);
 
         return ResponseEntity.ok("Invite");
     }
@@ -133,9 +157,9 @@ public class GameController {
         Game game = curUser.getGame();
         game.setPlayerTwo(game.getUserOnHold());
 
-        String button = "<button class=\"btn red\" hx-get=\"/leave\" hx-trigger=\"click\" hx-target=\".state\">leave game</button>";
-        eventService.sendEvent(game.users.getFirst().getId(), "btnleave", button);
-        eventService.sendEvent(game.users.getLast().getId(), "btnleave", button);
+        String btnLeave = "<button class=\"btn red\" hx-get=\"/leave\" hx-trigger=\"click\" hx-target=\".state\">leave game</button>";
+        eventService.sendEvent(game.users.getFirst().getId(), "btnleave", btnLeave);
+        eventService.sendEvent(game.users.getLast().getId(), "btnleave", btnLeave);
 
         eventService.sendInitialState(game.getBoard(), game.users);
 
@@ -159,10 +183,11 @@ public class GameController {
         user2.joinGame(gameService.getGame(user2.getId()));
         game.setPlayerTwo(user1);
 
-        eventService.sendEvent(clientId, "state", "left the game");
+        String btnRandom = "<button class=\"btn\" hx-get=\"/random\" hx-trigger=\"click\" hx-target=\".state\">Random</button>";
+        eventService.sendEvent(clientId, "state", "you left the game");
         eventService.sendEvent(clientId.equals(user1.getId()) ? user2.getId() : user1.getId(), "state", clientId + " left the game");
-        eventService.sendEvent(user1.getId(), "btnleave", "");
-        eventService.sendEvent(user2.getId(), "btnleave", "");
+        eventService.sendEvent(user1.getId(), "btnleave", btnRandom);
+        eventService.sendEvent(user2.getId(), "btnleave", btnRandom);
 
         eventService.sendInitialState(user1.getGame().getBoard(), user1.getGame().users);
         eventService.sendInitialState(user2.getGame().getBoard(), user2.getGame().users);

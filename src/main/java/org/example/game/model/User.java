@@ -1,7 +1,5 @@
 package org.example.game.model;
 
-import java.util.Random;
-
 public class User {
     //-------------------------
     protected final String id;
@@ -14,7 +12,7 @@ public class User {
 
     public User(String id, String name, String symbol) {
         this.id = id;
-        this.name = "player" + id;
+        this.name = name;
         this.symbol = symbol;
     }
 
