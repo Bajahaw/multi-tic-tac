@@ -29,9 +29,11 @@ public class Game {
     }
 
     public void setPlayerTwo(User playerTwo) {
+        // player joining himself -> remove the second player
         if (playerTwo == users.getFirst()) {
             if (users.size() > 1) users.remove(users.getLast());
             userToMove = users.getFirst();
+            userOnHold = null;
             reset();
             resetScore();
             return;
