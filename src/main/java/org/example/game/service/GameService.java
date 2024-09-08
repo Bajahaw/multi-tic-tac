@@ -1,6 +1,9 @@
 package org.example.game.service;
 
+import org.example.game.controller.GameController;
 import org.example.game.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +17,7 @@ public class GameService {
     //-------------------------------------------------
     EventService eventService;
     private final Map<String, Game> activeGames = new ConcurrentHashMap<>();
+    public static final Logger logger = LoggerFactory.getLogger(GameController.class);
     //-------------------------------------------------
 
     public GameService(EventService eventService) {
@@ -74,7 +78,7 @@ public class GameService {
 
     @Scheduled(fixedRate = 600000)
     public void removeInactiveGames() {
-        System.out.println("Active games: " + activeGames.size());
+        logger.info("Active games: {}", activeGames.size());
 
         LocalDateTime now = LocalDateTime.now();
         Iterator<Game> iterator = activeGames.values().iterator();

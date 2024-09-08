@@ -13,7 +13,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Random;
 
 @Controller
@@ -31,7 +30,7 @@ public class GameController {
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<String> handleException(Exception e) {
-        System.out.println(LocalDateTime.now() + "  WARN ---- ---- Error: " + e.getMessage());
+        GameService.logger.warn("IO Error: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An error occurred while processing the request");
     }
 
@@ -118,7 +117,7 @@ public class GameController {
             eventService.sendEvent(clientId, "state", "Seems that no opponents online!");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        System.out.println("opponent: " + opponent.getName());
+        GameService.logger.info("opponent: {}", opponent.getName());
 
         Game game = opponent.getGame();
         game.setUserOnHold(curUser);
