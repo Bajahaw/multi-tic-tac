@@ -3,7 +3,6 @@ package org.example.game.service;
 import org.example.game.model.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
@@ -21,9 +20,10 @@ public class GameService {
         this.eventService = eventService;
     }
 
-    public void createGame(String id) {
+    public Game createGame(String id) {
         Game game = new Game( new User(id, "player" + id, "×"));
         activeGames.put(id, game);
+        return game;
     }
 
     public Game getGame(String id) {
@@ -84,13 +84,6 @@ public class GameService {
                 eventService.disConnect(game.users.getFirst().getId());
                 iterator.remove();
             }
-        }
-
-        try { // keep the server alive
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.getForObject("http://localhost:10000/connect", String.class);
-        } catch (Exception e) {
-            System.out.println("Failed to make self-request: " + e);
         }
     }
 

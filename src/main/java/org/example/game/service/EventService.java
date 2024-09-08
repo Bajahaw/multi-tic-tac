@@ -102,10 +102,10 @@ public class EventService {
         SseEmitter emitter = emitters.get(id);
         if (emitter != null) {
             try {
-                emitter.send(SseEmitter.event().name("heartbeat"));
+                emitter.send(SseEmitter.event().name("state").data(""));
                 return true;
             } catch (IOException e) {
-                System.out.println("sendEvent error: Connection with: " + id + " might be lost -> " + e.getMessage());
+                System.out.println("client is not connected - error: Connection with: " + id + " might be lost -> " + e.getMessage());
                 emitters.remove(id);
                 return false;
             }

@@ -9,11 +9,11 @@ public class Computer {
             throw new RuntimeException(e);
         }
         String symbol = game.users.getFirst().getSymbol().equals("○") ? "×" : "○";
-        game.lastMove = computerMove(game.getBoard(), evaluateBoard(game.getBoard(), symbol), symbol);
+        game.lastMove = computerMove(game.getBoard(), evaluateBoard(game.getBoard(), symbol));
         game.getBoard()[game.lastMove] = symbol;
     }
 
-    private static int computerMove(String[] board, int[] combination, String symbol) {
+    private static int computerMove(String[] board, int[] combination) {
         for (int i = 0; i < 3; i++) {
             if (board[combination[i]].isEmpty()) {
                 return combination[i];
