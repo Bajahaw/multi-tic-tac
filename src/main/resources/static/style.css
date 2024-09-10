@@ -60,13 +60,13 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    transition: 0.2s;
+    transition: 0.3s;
+    .content{
+        visibility: hidden;
+    }
     .p{
         position: absolute;
         visibility: visible;
-    }
-    .content{
-        visibility: hidden;
     }
 }
 
@@ -88,6 +88,9 @@ body {
 .profile:focus-within {
     width: 325px;
     height: 200px;
+    @media (max-width: 600px) {
+        width: 90%;
+    }
     .p{
         visibility: hidden;
     }

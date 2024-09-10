@@ -56,7 +56,6 @@ public class GameController {
         if (clientId == null) {
             return null;
         }
-
         User user = gameService.getUser(clientId);
         if (user == null) {
             user = gameService.createGame(clientId).users.getFirst();
@@ -66,6 +65,19 @@ public class GameController {
         eventService.sendEvent(clientId, "clientId", clientId);
         eventService.sendEvent(clientId, "player1name", user.getName());
         eventService.sendInitialState(user.getGame().getBoard(), List.of(user));
+
+
+        if (!user.isFree()) {
+            String button = """
+                <button class="btn red"
+                    hx-get="/leave"
+                    hx-trigger="click"
+                    hx-target=".state">
+                    leave game
+                </button>""";
+            eventService.sendEvent(clientId, "state", button);
+        }
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(emitter);
@@ -87,38 +99,6 @@ public class GameController {
                 gameService.makeMove(game);
             }
         });
-        return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .build();
-    }
-
-    @GetMapping("/reload")
-    public ResponseEntity<String> reload(HttpSession session) {
-        String clientId = (String) session.getAttribute("clientId");
-        User currUser = gameService.getUser(clientId);
-        if (currUser == null || !eventService.isClientConnected(clientId)) {
-            return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
-                    .build();
-        }
-        Game game = currUser.getGame();
-        if (game == null) {
-            return ResponseEntity
-                    .status(HttpStatus.NO_CONTENT)
-                    .build();
-        }
-        String button = """
-                <button class="btn red"
-                    hx-get="/leave"
-                    hx-trigger="click"
-                    hx-target=".state">
-                    leave game
-                </button>""";
-        if (game.users.size() > 1) {
-            eventService.sendEvent(clientId, "state", button);
-            eventService.broadcastGameStatus(game.pOneScore, game.pTwoScore, game.users);
-        }
-        eventService.sendInitialState(game.getBoard(), List.of(currUser));
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
