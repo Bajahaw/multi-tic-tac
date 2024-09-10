@@ -1,9 +1,5 @@
 name: Build and Deploy to Render
 
-permissions:
-  contents: read
-  packages: write
-
 on:
   push:
     branches:
