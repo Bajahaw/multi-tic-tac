@@ -38,7 +38,7 @@ public class Game {
             resetScore();
             return;
         }
-        playerTwo.symbol = this.users.getFirst().getSymbol().equals("○") ? "×" : "○";
+        playerTwo.setSymbol(this.users.getFirst().getSymbol().equals("○") ? "×" : "○");
         this.users.add(playerTwo);
         playerTwo.joinGame(this);
         reset();

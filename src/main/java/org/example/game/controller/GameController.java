@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 
 @Controller
@@ -30,22 +31,27 @@ public class GameController {
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<String> handleException(Exception e) {
-        GameService.logger.warn("IO Error: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An error occurred while processing the request");
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("An error occurred while processing the request" + e.getMessage());
     }
 
     @GetMapping("/")
     public String index(HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
         if (clientId == null) {
-            clientId = "" + Random.from(new Random(System.currentTimeMillis())).nextInt(10000, 100000);
+
+            clientId = "" + Random
+                    .from(new Random(System.currentTimeMillis()))
+                    .nextInt(10000, 100000);
+
             session.setAttribute("clientId", clientId);
         }
         return "index.html";
     }
 
     @GetMapping("/connect")
-    public SseEmitter connect(HttpSession session) {
+    public ResponseEntity<SseEmitter> connect(HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
         if (clientId == null) {
             return null;
@@ -59,8 +65,10 @@ public class GameController {
         SseEmitter emitter = eventService.connect(clientId);
         eventService.sendEvent(clientId, "clientId", clientId);
         eventService.sendEvent(clientId, "player1name", user.getName());
-        eventService.sendInitialState(user.getGame().getBoard(), user.getGame().users);
-        return emitter;
+        eventService.sendInitialState(user.getGame().getBoard(), List.of(user));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(emitter);
     }
 
     @PostMapping("/move/{cellIndex}")
@@ -68,7 +76,9 @@ public class GameController {
         String clientId = (String) session.getAttribute("clientId");
         User curUuser = gameService.getUser(clientId);
         if (curUuser == null || !eventService.isClientConnected(clientId)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
         }
         Game game = curUuser.getGame();
         game.users.forEach(user -> {
@@ -77,7 +87,9 @@ public class GameController {
                 gameService.makeMove(game);
             }
         });
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
     @GetMapping("/reload")
@@ -85,23 +97,31 @@ public class GameController {
         String clientId = (String) session.getAttribute("clientId");
         User currUser = gameService.getUser(clientId);
         if (currUser == null || !eventService.isClientConnected(clientId)) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .build();
         }
         Game game = currUser.getGame();
         if (game == null) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .build();
         }
-        String button = "<button class=\"btn red\" hx-get=\"/leave\" hx-trigger=\"click\" hx-target=\".state\">leave game</button>";
+        String button = """
+                <button class="btn red"
+                    hx-get="/leave"
+                    hx-trigger="click"
+                    hx-target=".state">
+                    leave game
+                </button>""";
         if (game.users.size() > 1) {
             eventService.sendEvent(clientId, "state", button);
             eventService.broadcastGameStatus(game.pOneScore, game.pTwoScore, game.users);
         }
-        eventService.sendInitialState(game.getBoard(),
-                game.users
-                        .stream()
-                        .filter(user -> user.getId().equals(clientId))
-                        .toList());
-        return ResponseEntity.noContent().build();
+        eventService.sendInitialState(game.getBoard(), List.of(currUser));
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
     @GetMapping("/random")
@@ -109,13 +129,17 @@ public class GameController {
         String clientId = (String) session.getAttribute("clientId");
         User curUser = gameService.getUser(clientId);
         if (curUser == null || !eventService.isClientConnected(clientId)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not connected.");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Client not connected.");
         }
 
         User opponent = gameService.getRandmoUser(curUser.getId());
         if(opponent == null) {
             eventService.sendEvent(clientId, "state", "Seems that no opponents online!");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
         }
         GameService.logger.info("opponent: {}", opponent.getName());
 
@@ -125,7 +149,9 @@ public class GameController {
         eventService.sendEvent(clientId, "state", "Invitation sent ...");
         eventService.sendEvent(opponent.getId(), "btnleave", btnAccept);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 
     @PostMapping("/join")
@@ -134,18 +160,24 @@ public class GameController {
         String clientId = (String) session.getAttribute("clientId");
         User curUser = gameService.getUser(clientId);
         if (curUser == null || !eventService.isClientConnected(clientId)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not connected.");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Client not connected.");
         }
 
         User user = gameService.getUser(gameId);
         if (user == null || !eventService.isClientConnected(gameId)) {
             eventService.sendEvent(clientId, "state", "game not found or user not connected");
-            return ResponseEntity.badRequest().body("game not found or user not connected");
+            return ResponseEntity
+                    .badRequest()
+                    .body("game not found or user not connected");
         }
 
         if (!user.isFree() || user == curUser) {
             eventService.sendEvent(clientId, "state", "Game already has two players.");
-            return ResponseEntity.badRequest().body("Game already has two players.");
+            return ResponseEntity
+                    .badRequest()
+                    .body("Game already has two players.");
         }
 
         Game game = user.getGame();
@@ -157,7 +189,9 @@ public class GameController {
         eventService.sendEvent(clientId, "state", "Invitation sent ...");
         eventService.sendEvent(gameId, "btnleave", btnAccept);
 
-        return ResponseEntity.ok("Invite");
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Invite");
     }
 
     @GetMapping("/accept")
@@ -165,7 +199,9 @@ public class GameController {
         String clientId = (String) session.getAttribute("clientId");
         User curUser = gameService.getUser(clientId);
         if (curUser == null || !eventService.isClientConnected(clientId)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client not connected.");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Client not connected.");
         }
 
         Game game = curUser.getGame();
@@ -177,7 +213,9 @@ public class GameController {
 
         eventService.sendInitialState(game.getBoard(), game.users);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
     @GetMapping("/leave")
@@ -185,7 +223,9 @@ public class GameController {
 
         String clientId = (String) session.getAttribute("clientId");
         if (gameService.getUser(clientId) == null || !eventService.isClientConnected(clientId)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Connection error.");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Connection error.");
         }
 
         Game game = gameService.getUser(clientId).getGame();
@@ -197,7 +237,13 @@ public class GameController {
         user2.joinGame(gameService.getGame(user2.getId()));
         game.setPlayerTwo(user1);
 
-        String btnRandom = "<button class=\"btn\" hx-get=\"/random\" hx-trigger=\"click\" hx-target=\".state\">Random</button>";
+        String btnRandom = """
+                <button class="btn"
+                        hx-get="/random"
+                        hx-trigger="click"
+                        hx-target=".state">
+                        Random
+                </button>""";
         eventService.sendEvent(clientId, "state", "you left the game");
         eventService.sendEvent(clientId.equals(user1.getId()) ? user2.getId() : user1.getId(), "state", clientId + " left the game");
         eventService.sendEvent(user1.getId(), "btnleave", btnRandom);
@@ -205,6 +251,30 @@ public class GameController {
 
         eventService.sendInitialState(user1.getGame().getBoard(), user1.getGame().users);
         eventService.sendInitialState(user2.getGame().getBoard(), user2.getGame().users);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
+    @PostMapping("/rename")
+    public ResponseEntity<String> rename(@RequestParam String newName, HttpSession session) {
+        String clientId = (String) session.getAttribute("clientId");
+        User curUser = gameService.getUser(clientId);
+
+        if (curUser == null)
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Client not connected.");
+
+        curUser.setName(newName);
+        if(eventService.isClientConnected(clientId)){
+            eventService.sendEvent(curUser.getId(), "player1name", newName);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body("username: " + newName);
+        }
+        return ResponseEntity
+                .status(HttpStatus.PARTIAL_CONTENT)
+                .body("username: " + newName);
     }
 }

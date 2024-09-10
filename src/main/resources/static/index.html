@@ -1,42 +1,55 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="UTF-8">
-    <title>Multi Tic-Tac</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="htmx.min.js"></script>
-    <script src="sse.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-<div class="profile">P</div>
-<div class="container" hx-ext="sse" sse-connect="/connect">
-    <div class="clientId" sse-swap="clientId"></div>
-    <div class="player one" hx-get="/reload" hx-trigger="load">
-        <div class="result" sse-swap="player:1"> 0</div>
-        <div class="name" sse-swap="player1name"> player 1</div>
-    </div>
-    <div class="board">
-        <div id="0" class="square top left" hx-post="/move/0" sse-swap="cellUpdate:0"></div>
-        <div id="1" class="square top" hx-post="/move/1" sse-swap="cellUpdate:1"></div>
-        <div id="2" class="square top right" hx-post="/move/2" sse-swap="cellUpdate:2"></div>
-        <div id="3" class="square left" hx-post="/move/3" sse-swap="cellUpdate:3"></div>
-        <div id="4" class="square" hx-post="/move/4" sse-swap="cellUpdate:4"></div>
-        <div id="5" class="square right" hx-post="/move/5" sse-swap="cellUpdate:5"></div>
-        <div id="6" class="square bottom left" hx-post="/move/6" sse-swap="cellUpdate:6"></div>
-        <div id="7" class="square bottom" hx-post="/move/7" sse-swap="cellUpdate:7"></div>
-        <div id="8" class="square bottom right" hx-post="/move/8" sse-swap="cellUpdate:8"></div>
-    </div>
-    <div class="player two">
-        <div class="result" sse-swap="player:2"> 0</div>
-        <div class="name" sse-swap="player2name">Computer</div>
-    </div>
-    <form class="form" onkeydown="return event.key != 'Enter';">
-        <input name="gameId" placeholder="Enter user ID">
-        <button type="button" class="btn" hx-trigger="click" hx-post="/join">Invite</button>
-        <div class="state" sse-swap="btnleave"><button class="btn" hx-get="/random" hx-trigger="click" hx-target=".state">Random</button></div>
-        <div class="state" sse-swap="state"></div>
-    </form>
-</div>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Multi Tic-Tac</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="htmx.min.js"></script>
+        <script src="sse.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <button class="profile">
+            <div class="p" >P</div>
+            <form class="form user content" onkeydown="return event.key != 'Enter';">
+                <div class="state name">username:  Player 1</div>
+                <input name="newName" placeholder="Enter new name">
+                <div type="button"
+                     class="btn flex"
+                     hx-trigger="click"
+                     hx-post="/rename"
+                     hx-target=".state.name"
+                     hx-swap="innerHTML"
+                >Save</div>
+            </form>
+        </button>
+        <div class="container" hx-ext="sse" sse-connect="/connect">
+            <div class="clientId" sse-swap="clientId"></div>
+            <div class="player one" hx-get="/reload" hx-trigger="load">
+                <div class="result" sse-swap="player:1"> 0</div>
+                <div class="name" sse-swap="player1name"> player 1</div>
+            </div>
+            <div class="board">
+                <div id="0" class="square top left" hx-post="/move/0" sse-swap="cellUpdate:0"></div>
+                <div id="1" class="square top" hx-post="/move/1" sse-swap="cellUpdate:1"></div>
+                <div id="2" class="square top right" hx-post="/move/2" sse-swap="cellUpdate:2"></div>
+                <div id="3" class="square left" hx-post="/move/3" sse-swap="cellUpdate:3"></div>
+                <div id="4" class="square" hx-post="/move/4" sse-swap="cellUpdate:4"></div>
+                <div id="5" class="square right" hx-post="/move/5" sse-swap="cellUpdate:5"></div>
+                <div id="6" class="square bottom left" hx-post="/move/6" sse-swap="cellUpdate:6"></div>
+                <div id="7" class="square bottom" hx-post="/move/7" sse-swap="cellUpdate:7"></div>
+                <div id="8" class="square bottom right" hx-post="/move/8" sse-swap="cellUpdate:8"></div>
+            </div>
+            <div class="player two">
+                <div class="result" sse-swap="player:2"> 0</div>
+                <div class="name" sse-swap="player2name">Computer</div>
+            </div>
+            <form class="form" onkeydown="return event.key != 'Enter';">
+                <input name="gameId" placeholder="Enter user ID">
+                <button type="button" class="btn" hx-trigger="click" hx-post="/join">Invite</button>
+                <div class="state" sse-swap="btnleave"><button class="btn" hx-get="/random" hx-trigger="click" hx-target=".state">Random</button></div>
+                <div class="state" sse-swap="state"></div>
+            </form>
+        </div>
+    </body>
 </html>

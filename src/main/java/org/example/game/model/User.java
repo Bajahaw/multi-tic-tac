@@ -2,12 +2,12 @@ package org.example.game.model;
 
 public class User {
     //-------------------------
-    protected final String id;
-    protected final String name;
-    protected String symbol;
-    protected Game game;
-    protected int move = -1;
-    protected final double score = 0;
+    private final String id;
+    private String name;
+    private String symbol;
+    private Game game;
+    private int move = -1;
+    private double score = 0;
     //--------------------------
 
     public User(String id, String name, String symbol) {
@@ -22,6 +22,10 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSymbol() {
@@ -53,5 +57,9 @@ public class User {
 
     public boolean isFree() {
         return game.users.size() < 2;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 }

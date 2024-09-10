@@ -47,16 +47,27 @@ body {
 .profile {
     position: absolute;
     cursor: pointer;
+    z-index: 999;
     top: 15px;
     left: 15px;
     width: 50px;
     height: 50px;
+    background-color: black;
+    color: white;
     border: 1px solid white;
-    border-radius: 50%;
+    border-radius: 25px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    transition: 0.1s;
+    align-items: center;
+    overflow: hidden;
+    transition: 0.2s;
+    .p{
+        position: absolute;
+        visibility: visible;
+    }
+    .content{
+        visibility: hidden;
+    }
 }
 
 .clientId {
@@ -74,9 +85,15 @@ body {
     transition: 0.1s;
 }
 
-.profile:hover {
-    background-color: white;
-    color: black;
+.profile:focus-within {
+    width: 325px;
+    height: 200px;
+    .p{
+        visibility: hidden;
+    }
+    .content{
+        visibility: visible;
+    }
 }
 
 .board {
@@ -136,12 +153,16 @@ body {
     flex-direction: column;
     margin-top: 50px;
 }
+.form.user{
+    margin-top: 0;
+}
 
 .state {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 5px;
+    margin-bottom: 10px;
 }
 
 .btn.red {
@@ -154,7 +175,6 @@ body {
     background-color: darkgreen; !important;
     color: white;
 }
-
 input {
     max-width: 145px;
     height: 25px;
@@ -179,6 +199,12 @@ input {
     background-color: black;
     color: white;
     border: 1px solid white;
+}
+
+.flex{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .result {
