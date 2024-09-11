@@ -3,14 +3,15 @@ package org.example.game.model;
 public class Computer {
 
     public static void makeMove(Game game) {
+
+        String symbol = game.users.getFirst().getSymbol().equals("○") ? "×" : "○";
+        game.lastMove = computerMove(game.getBoard(), evaluateBoard(game.getBoard(), symbol));
+        game.getBoard()[game.lastMove] = symbol;
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        String symbol = game.users.getFirst().getSymbol().equals("○") ? "×" : "○";
-        game.lastMove = computerMove(game.getBoard(), evaluateBoard(game.getBoard(), symbol));
-        game.getBoard()[game.lastMove] = symbol;
     }
 
     private static int computerMove(String[] board, int[] combination) {
