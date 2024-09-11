@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="style.css">
         <script src="htmx.min.js"></script>
         <script src="sse.js"></script>
+        <meta name="google-site-verification" content="O-S4cH8728SPfTFkCX6RuZUKNS8OdTscnmrQc2LDBZE" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="Multi-tic-tac" content="A multiplayer tic tac - xo - game to play with who you want">
     </head>
@@ -48,7 +49,7 @@
             </div>
             <form class="form" onkeydown="return event.key != 'Enter';">
                 <input name="gameId" placeholder="Enter user ID">
-                <button type="button" class="btn" hx-trigger="click" hx-post="/join">Invite</button>
+                <button type="button" class="btn" hx-trigger="click" hx-post="/invite">Invite</button>
                 <div class="state" sse-swap="btnleave"><button class="btn" hx-get="/random" hx-trigger="click" hx-target=".state">Random</button></div>
                 <div class="state" sse-swap="state"></div>
             </form>

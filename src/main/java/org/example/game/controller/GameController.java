@@ -35,7 +35,7 @@ public class GameController {
      * @return a response entity with a status of BAD_REQUEST and a message
      */
     @ExceptionHandler(IOException.class)
-    public ResponseEntity<String> handleException(Exception e) {
+    public ResponseEntity<String> handleException(IOException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body("An error occurred while processing the request" + e.getMessage());
@@ -75,7 +75,9 @@ public class GameController {
     public ResponseEntity<SseEmitter> connect(HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
         if (clientId == null) {
-            return null;
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
         }
         User user = gameService.getUser(clientId);
         if (user == null) {
@@ -179,12 +181,12 @@ public class GameController {
      * invitation with the join button to the opponent if found.
      *
      * @param session the HttpSession object
-     * @param gameId the id of the game or user to invite
+     * @param userId the id of the game or user to invite
      * @return a response entity with a status of OK if the game is found, or
      * BAD_REQUEST otherwise.
      */
-    @PostMapping("/join")
-    public ResponseEntity<String> join(HttpSession session, @RequestParam String gameId) {
+    @PostMapping("/invite")
+    public ResponseEntity<String> invite(HttpSession session, @RequestParam String userId) {
 
         String clientId = (String) session.getAttribute("clientId");
         User curUser = gameService.getUser(clientId);
@@ -194,8 +196,8 @@ public class GameController {
                     .body("Client not connected.");
         }
 
-        User user = gameService.getUser(gameId);
-        if (user == null || !eventService.isClientConnected(gameId)) {
+        User user = gameService.getUser(userId);
+        if (user == null || !eventService.isClientConnected(userId)) {
             eventService.sendEvent(clientId, "state", "game not found or user not connected");
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -216,7 +218,7 @@ public class GameController {
 
         String btnAccept = "<button class=\"btn green\" hx-get=\"/accept\" hx-trigger=\"click\" hx-target=\".state\">Join "+curUser.getName()+"</button>";
         eventService.sendEvent(clientId, "state", "Invitation sent ...");
-        eventService.sendEvent(gameId, "btnleave", btnAccept);
+        eventService.sendEvent(userId, "btnleave", btnAccept);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
