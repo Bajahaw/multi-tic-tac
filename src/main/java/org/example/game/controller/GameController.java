@@ -29,6 +29,11 @@ public class GameController {
         this.gameService = gameService;
     }
 
+    /**
+     * This method handles only global IOExceptions from being thrown by the application.
+     * @param e the exception
+     * @return a response entity with a status of BAD_REQUEST and a message
+     */
     @ExceptionHandler(IOException.class)
     public ResponseEntity<String> handleException(Exception e) {
         return ResponseEntity
@@ -36,6 +41,13 @@ public class GameController {
                 .body("An error occurred while processing the request" + e.getMessage());
     }
 
+    /**
+     * index method is called first to create a random clientId for each user. and to
+     * assign a unique JSESSIONID before it is used connect method.
+     * 
+     * @param session the HttpSession object
+     * @return the index page
+     */
     @GetMapping("/")
     public String index(HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
@@ -50,6 +62,15 @@ public class GameController {
         return "index.html";
     }
 
+    /**
+     * connect method is called after the index method to make an SSE connection
+     * with the client and send the clientId, the name, and the initial state
+     * - whether it is new game or existing one - to the client. Also, if the user
+     * is not in his initial game, it will send a html button to leave the game.
+     *
+     * @param session the HttpSession object
+     * @return a response entity with a status of OK and an SseEmitter object
+     */
     @GetMapping("/connect")
     public ResponseEntity<SseEmitter> connect(HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
@@ -83,6 +104,16 @@ public class GameController {
                 .body(emitter);
     }
 
+    /**
+     * makeMove method is called when a user makes a move. It updates the current
+     * user's move after validating it in User class, and then calls the makeMove
+     * method from the GameService class.
+     *
+     * @param cellIndex the index of the cell
+     * @param session the HttpSession object
+     * @return a response entity with a status of NO_CONTENT, or BAD_REQUEST if the
+     * client is not connected
+     */
     @PostMapping("/move/{cellIndex}")
     public ResponseEntity<String> makeMove(@PathVariable int cellIndex, HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
@@ -104,6 +135,15 @@ public class GameController {
                 .build();
     }
 
+    /**
+     * random method is called when a user clicks on the random button to find an
+     * opponent. It sends a message to the user whether opponents are found or not, and
+     * sends an invitation to the opponent if found.
+     *
+     * @param session the HttpSession object
+     * @return a response entity with a status of OK if an opponent is found, or
+     * NOT_FOUND if no opponents are found, or BAD_REQUEST if the client is not connected
+     */
     @GetMapping("/random")
     public ResponseEntity<String> random(HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
@@ -121,7 +161,6 @@ public class GameController {
                     .status(HttpStatus.NOT_FOUND)
                     .build();
         }
-        GameService.logger.info("opponent: {}", opponent.getName());
 
         Game game = opponent.getGame();
         game.setUserOnHold(curUser);
@@ -134,6 +173,16 @@ public class GameController {
                 .build();
     }
 
+    /**
+     * join (invite -as should be) method is called when a user send a request to other user
+     * to join. It sends a message to the user whether the game is found or not, and sends an
+     * invitation with the join button to the opponent if found.
+     *
+     * @param session the HttpSession object
+     * @param gameId the id of the game or user to invite
+     * @return a response entity with a status of OK if the game is found, or
+     * BAD_REQUEST otherwise.
+     */
     @PostMapping("/join")
     public ResponseEntity<String> join(HttpSession session, @RequestParam String gameId) {
 
@@ -149,14 +198,14 @@ public class GameController {
         if (user == null || !eventService.isClientConnected(gameId)) {
             eventService.sendEvent(clientId, "state", "game not found or user not connected");
             return ResponseEntity
-                    .badRequest()
+                    .status(HttpStatus.BAD_REQUEST)
                     .body("game not found or user not connected");
         }
 
         if (!user.isFree() || user == curUser) {
             eventService.sendEvent(clientId, "state", "Game already has two players.");
             return ResponseEntity
-                    .badRequest()
+                    .status(HttpStatus.BAD_REQUEST)
                     .body("Game already has two players.");
         }
 
@@ -174,6 +223,15 @@ public class GameController {
                 .body("Invite");
     }
 
+    /**
+     * accept method is called when a user accepts an invitation to join a game.
+     * It adds the user to the game and sends the initial state of the game to both players.
+     * It also sends a leave button to the players.
+     *
+     * @param session the HttpSession object
+     * @return a response entity with a status of NO_CONTENT, or BAD_REQUEST if the
+     * client is not connected
+     */
     @GetMapping("/accept")
     public ResponseEntity<String> accept(HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
@@ -187,7 +245,13 @@ public class GameController {
         Game game = curUser.getGame();
         game.setPlayerTwo(game.getUserOnHold());
 
-        String btnLeave = "<button class=\"btn red\" hx-get=\"/leave\" hx-trigger=\"click\" hx-target=\".state\">leave game</button>";
+        String btnLeave = """
+                <button class="btn red"
+                     hx-get="/leave"
+                     hx-trigger="click"
+                     hx-target=".state">
+                     leave game
+                 </button>""";
         eventService.sendEvent(game.users.getFirst().getId(), "btnleave", btnLeave);
         eventService.sendEvent(game.users.getLast().getId(), "btnleave", btnLeave);
 
@@ -198,6 +262,15 @@ public class GameController {
                 .build();
     }
 
+    /**
+     * leave method is called when a user leaves a game. Each user returns to their initial
+     * game. and it sends a message to the players that the user has left the game, and sends a random button to the
+     * players to find a new opponent.
+     *
+     * @param session the HttpSession object
+     * @return a response entity with a status of NO_CONTENT, or BAD_REQUEST if the
+     * client is not connected
+     */
     @GetMapping("/leave")
     public ResponseEntity<String> leave(HttpSession session) {
 
@@ -236,6 +309,15 @@ public class GameController {
                 .build();
     }
 
+    /**
+     * rename method is called when a user changes their name. It sends the new name to the
+     * players in the game.
+     *
+     * @param newName the new name
+     * @param session the HttpSession object
+     * @return a response entity with a status of OK, or PARTIAL_CONTENT if the
+     * client is not connected
+     */
     @PostMapping("/rename")
     public ResponseEntity<String> rename(@RequestParam String newName, HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
