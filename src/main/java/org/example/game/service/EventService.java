@@ -19,9 +19,9 @@ public class EventService {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         GameService.logger.info("Connecting to user {}", user);
         emitters.put(user, emitter);
-        emitter.onCompletion(() -> emitters.remove(user));
-        emitter.onTimeout(() -> emitters.remove(user));
-        emitter.onError(e -> emitters.remove(user));
+        emitter.onCompletion(() -> disConnect(user));
+        emitter.onTimeout(() -> disConnect(user));
+        emitter.onError(e -> disConnect(user));
         return emitter;
     }
 

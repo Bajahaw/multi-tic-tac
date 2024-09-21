@@ -55,6 +55,10 @@ public class User {
         return game;
     }
 
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
     public boolean isFree() {
         return game.users.size() < 2;
     }

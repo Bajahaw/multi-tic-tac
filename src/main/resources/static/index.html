@@ -48,7 +48,7 @@
                 <div class="name" sse-swap="player2name">Computer</div>
             </div>
             <form class="form" onkeydown="return event.key != 'Enter';">
-                <input name="gameId" placeholder="Enter user ID">
+                <input name="userId" placeholder="Enter user ID">
                 <button type="button" class="btn" hx-trigger="click" hx-post="/invite">Invite</button>
                 <div class="state" sse-swap="btnleave"><button class="btn" hx-get="/random" hx-trigger="click" hx-target=".state">Random</button></div>
                 <div class="state" sse-swap="state"></div>
