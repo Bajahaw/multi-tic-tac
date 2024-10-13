@@ -35,7 +35,10 @@ body {
     color: #fff;
     font-family: sans-serif;
 }
-
+.description {
+    visibility: hidden;
+    position: absolute;
+}
 .container {
     display: flex;
     flex-wrap: wrap;
