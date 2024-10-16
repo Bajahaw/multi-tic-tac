@@ -1,6 +1,8 @@
 package org.example.game.service;
 
 import org.example.game.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -13,11 +15,12 @@ import java.util.concurrent.ConcurrentMap;
 public class EventService {
     //-------------------------------------------------------------------------------------
     private final ConcurrentMap<String, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final Logger log = LoggerFactory.getLogger(EventService.class);
     //-------------------------------------------------------------------------------------
 
     public SseEmitter connect(String user) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        GameService.logger.info("Connecting to user {}", user);
+        log.info("Connecting to user {}", user);
         emitters.put(user, emitter);
         emitter.onCompletion(() -> disConnect(user));
         emitter.onTimeout(() -> disConnect(user));
@@ -40,7 +43,7 @@ public class EventService {
                     emitters.get(user.getId()).send(SseEmitter.event().name("player2name").data(name));
 
                 } catch (IOException e) {
-                    GameService.logger.warn("State initializer error: Connection with: {} might be lost -> {}", user.getId(), e.getMessage());
+                    log.warn("State initializer error: Connection with: {} might be lost -> {}", user.getId(), e.getMessage());
                     emitters.remove(user.getId());
                 }
             }
@@ -53,7 +56,7 @@ public class EventService {
                 if (emitters.containsKey(user.getId()))
                     emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + cellIndex).data(value));
             } catch (IOException e) {
-                GameService.logger.warn("BroadcastMove error: Connection with: {} might be lost -> {}", user.getId(), e.getMessage());
+                log.warn("BroadcastMove error: Connection with: {} might be lost -> {}", user.getId(), e.getMessage());
                 emitters.remove(user.getId());
             }
         }
@@ -67,7 +70,7 @@ public class EventService {
                     emitters.get(user.getId()).send(SseEmitter.event().name("player:2").data(score2));
                 }
             } catch (IOException e) {
-                GameService.logger.warn("GameStatus Broadcast error: Connection with: {} might be lost -> {}", user.getId(), e.getMessage());
+                log.warn("GameStatus Broadcast error: Connection with: {} might be lost -> {}", user.getId(), e.getMessage());
                 emitters.remove(user.getId());
             }
         }
@@ -81,7 +84,7 @@ public class EventService {
                     if (emitters.containsKey(user.getId()))
                         emitters.get(user.getId()).send(SseEmitter.event().name("cellUpdate:" + winningLine[i]).data(data));
                 } catch (IOException e) {
-                    GameService.logger.warn("Winner Broadcast error: Connection with: {} might be lost -> {}", user.getId(), e.getMessage());
+                    log.warn("Winner Broadcast error: Connection with: {} might be lost -> {}", user.getId(), e.getMessage());
                     emitters.remove(user.getId());
                 }
             }
@@ -93,7 +96,7 @@ public class EventService {
             if (emitters.containsKey(id))
                 emitters.get(id).send(SseEmitter.event().name(eventName).data(data));
         } catch (IOException e) {
-            GameService.logger.warn("SendEvent error: Connection with: {} might be lost -> {}", id, e.getMessage());
+            log.warn("SendEvent error: Connection with: {} might be lost -> {}", id, e.getMessage());
             emitters.remove(id);
         }
     }
@@ -104,8 +107,8 @@ public class EventService {
             try {
                 emitter.send(SseEmitter.event().name("state").data(""));
                 return true;
-            } catch (IOException e) {
-                GameService.logger.warn("client is not connected - error: Connection with: {} might be lost -> {}", id, e.getMessage());
+            } catch (Exception e) {
+                log.warn("client is not connected - error: Connection with: {} might be lost -> {}", id, e.getMessage());
                 emitters.remove(id);
                 return false;
             }

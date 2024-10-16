@@ -1,6 +1,7 @@
 package org.example.game.controller;
 
 import jakarta.servlet.http.HttpSession;
+import org.apache.logging.log4j.Logger;
 import org.example.game.model.Game;
 import org.example.game.model.User;
 import org.example.game.service.EventService;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
@@ -22,6 +22,7 @@ public class GameController {
     //--------------------------------------------
     private final EventService eventService;
     private final GameService gameService;
+    private final Logger log = org.apache.logging.log4j.LogManager.getLogger(GameController.class);
     //--------------------------------------------
 
     public GameController(EventService eventService, GameService gameService) {
@@ -30,12 +31,13 @@ public class GameController {
     }
 
     /**
-     * This method handles only global IOExceptions from being thrown by the application.
+     * This method handles global exceptions from being thrown by the application.
      * @param e the exception
      * @return a response entity with a status of BAD_REQUEST and a message
      */
-    @ExceptionHandler(IOException.class)
-    public ResponseEntity<String> handleException(IOException e) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception e) {
+        log.error("An error occurred while processing the request: ", e);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body("An error occurred while processing the request" + e.getMessage());
@@ -89,7 +91,7 @@ public class GameController {
         eventService.sendEvent(clientId, "player1name", user.getName());
         eventService.sendInitialState(user.getGame().getBoard(), List.of(user));
 
-
+        // todo: implement all html using template engine
         if (!user.isFree()) {
             String button = """
                 <button class="btn red"

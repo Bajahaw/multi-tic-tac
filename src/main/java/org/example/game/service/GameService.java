@@ -1,6 +1,5 @@
 package org.example.game.service;
 
-import org.example.game.controller.GameController;
 import org.example.game.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +16,7 @@ public class GameService {
     //-------------------------------------------------
     EventService eventService;
     private final Map<String, Game> activeGames = new ConcurrentHashMap<>();
-    public static final Logger logger = LoggerFactory.getLogger(GameController.class);
+    private final Logger logger = LoggerFactory.getLogger(GameService.class);
     //-------------------------------------------------
 
     public GameService(EventService eventService) {

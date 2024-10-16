@@ -29,7 +29,7 @@ class EventServiceTest {
     }
 
     @Test
-    void sendInitialStateShouldSendEvents() throws IOException {
+    void sendInitialStateShouldSendEvents() {
         EventService eventService = new EventService();
         User user = new User("user1", "User One", "X");
         user.setGame(new Game(user));
@@ -40,7 +40,7 @@ class EventServiceTest {
     }
 
     @Test
-    void broadcastMoveShouldSendEventToAllUsers() throws IOException {
+    void broadcastMoveShouldSendEventToAllUsers() {
         EventService eventService = new EventService();
         User user1 = new User("user1", "User One", "X");
         User user2 = new User("user2", "User Two", "O");
@@ -52,7 +52,7 @@ class EventServiceTest {
     }
 
     @Test
-    void broadcastGameStatusShouldSendScoresToAllUsers() throws IOException {
+    void broadcastGameStatusShouldSendScoresToAllUsers() {
         EventService eventService = new EventService();
         User user1 = new User("user1", "User One", "X");
         User user2 = new User("user2", "User Two", "O");
@@ -64,7 +64,7 @@ class EventServiceTest {
     }
 
     @Test
-    void broadcastWinnerShouldSendWinningLineToAllUsers() throws IOException {
+    void broadcastWinnerShouldSendWinningLineToAllUsers() {
         EventService eventService = new EventService();
         User user1 = new User("user1", "User One", "X");
         User user2 = new User("user2", "User Two", "O");
@@ -77,7 +77,7 @@ class EventServiceTest {
     }
 
     @Test
-    void sendEventShouldSendEventToSpecificUser() throws IOException {
+    void sendEventShouldSendEventToSpecificUser() {
         EventService eventService = new EventService();
         User user = new User("user1", "User One", "X");
         eventService.connect(user.getId());
