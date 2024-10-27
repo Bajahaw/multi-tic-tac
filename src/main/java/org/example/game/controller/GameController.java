@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
 import java.util.List;
+import org.apache.commons.text.StringEscapeUtils;
 import java.util.Random;
 
 @Controller
@@ -337,10 +338,10 @@ public class GameController {
             eventService.sendEvent(curUser.getId(), "player1name", newName);
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body("username: " + newName);
+                    .body("username: " + StringEscapeUtils.escapeHtml4(newName));
         }
         return ResponseEntity
                 .status(HttpStatus.PARTIAL_CONTENT)
-                .body("username: " + newName);
+                .body("username: " + StringEscapeUtils.escapeHtml4(newName));
     }
 }
