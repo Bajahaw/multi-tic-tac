@@ -327,6 +327,7 @@ public class GameController {
     public ResponseEntity<String> rename(@RequestParam String newName, HttpSession session) {
         String clientId = (String) session.getAttribute("clientId");
         User curUser = gameService.getUser(clientId);
+        newName = StringEscapeUtils.escapeHtml4(newName);
 
         if (curUser == null)
             return ResponseEntity
@@ -338,10 +339,10 @@ public class GameController {
             eventService.sendEvent(curUser.getId(), "player1name", newName);
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body("username: " + StringEscapeUtils.escapeHtml4(newName));
+                    .body("username: " + newName);
         }
         return ResponseEntity
                 .status(HttpStatus.PARTIAL_CONTENT)
-                .body("username: " + StringEscapeUtils.escapeHtml4(newName));
+                .body("username: " + newName);
     }
 }
