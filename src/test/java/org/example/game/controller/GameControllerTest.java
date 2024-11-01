@@ -156,7 +156,10 @@ class GameControllerTest {
         User user = new User("clientId", "User", "X");
         when(gameService.getUser("clientId")).thenReturn(user);
         when(eventService.isClientConnected("clientId")).thenReturn(true);
-        ResponseEntity<String> response = gameController.rename("newName", session);
+        ResponseEntity<String> response = gameController.rename("<script>newName", session);
+        assertTrue(response.hasBody());
+        assertFalse(response.getBody().contains("<script>"));
+        assertFalse(user.getName().contains("<script>"));
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }
