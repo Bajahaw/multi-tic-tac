@@ -24,12 +24,7 @@ RUN mvn -Pnative native:compile
 # Use a lightweight runtime image for the final build
 FROM debian:12-slim
 
-# Install necessary runtime dependencies
-RUN apt-get update && \
-    apt-get install -y libz-dev && \
-    rm -rf /var/lib/apt/lists/*
-
-# Set working directory
+# Set up workdir
 WORKDIR /app
 
 # Copy the native executable from the build stage
