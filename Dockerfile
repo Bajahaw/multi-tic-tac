@@ -1,28 +1,45 @@
-# Step 1: Use a Liberica Lite base image with Maven
-FROM bellsoft/liberica-openjdk-alpine:21 AS build
+FROM debian:12-slim AS build
 
-# Install Maven
-RUN apk update && apk add maven
+RUN apt-get update && \
+    apt-get install -y wget gcc libz-dev maven && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
+RUN wget https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz && \
+    tar -xvzf graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz && \
+    rm graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz
+
+# Set the GraalVM installation path
+ENV GRAALVM_HOME=/graalvm-community-openjdk-21.0.2+13.1
+ENV PATH=$GRAALVM_HOME/bin:$PATH
+
+# Set working directory
 WORKDIR /app
 
-# Copy the pom.xml and source code at the same time
-COPY pom.xml .
-COPY src ./src
+# Copy the Maven wrapper and project files
+COPY . .
 
-# Build the project and create the JAR file
-RUN mvn clean package
+# Build the native image
+RUN mvn -Pnative native:compile
 
-# Step 2: Use a Liberica Lite base image for the final stage
-FROM bellsoft/liberica-runtime-container:jre-21-slim-glibc AS runtime
+# Use a lightweight runtime image for the final build
+FROM debian:12-slim
+
+# Install necessary runtime dependencies
+RUN apt-get update && \
+    apt-get install -y libz-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /app
 
-# Copy the JAR file from the build stage
-COPY --from=build /app/target/*.jar /app/app.jar
+# Copy the native executable from the build stage
+COPY --from=build /app/target/multi-tic-tac /app/multi-tic-tac
 
-# Expose port 10000
+# Set executable permissions
+RUN chmod +x /app/multi-tic-tac
+
+# Expose application port
 EXPOSE 10000
 
-# Command to run the application
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# Start the application
+CMD ["./multi-tic-tac"]
