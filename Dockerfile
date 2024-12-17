@@ -22,7 +22,7 @@ COPY . .
 RUN mvn -Pnative native:compile
 
 # Use a lightweight runtime image for the final build
-FROM debian:12-slim
+FROM frolvlad/alpine-glibc:alpine-3.20
 
 # Set up workdir
 WORKDIR /app
