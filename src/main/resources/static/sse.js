@@ -5,6 +5,12 @@ This extension adds support for Server Sent Events to htmx.  See /www/extensions
 
 */
 
+window.addEventListener("pageshow", e => {
+    if (e.persisted) {
+        htmx.sse.connect("/connect");
+    }
+});
+
 (function() {
     /** @type {import("../htmx").HtmxInternalApi} */
     var api
