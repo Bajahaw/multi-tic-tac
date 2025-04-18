@@ -22,7 +22,7 @@ COPY . .
 RUN mvn -Pnative native:compile
 
 # Use a lightweight runtime image for the final build
-FROM frolvlad/alpine-glibc:alpine
+FROM frolvlad/alpine-glibc
 
 # Set up workdir
 WORKDIR /app
